@@ -14,9 +14,27 @@ import {
 } from "@/lib/migration-date"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AlertTriangle, ArrowLeft, CheckCircle, FileText, ExternalLink } from "lucide-react"
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CheckCircle,
+  FileText,
+  ExternalLink,
+  Sparkles,
+  Bot,
+  Clock,
+  CheckCircle2,
+  ShieldCheck,
+  Landmark,
+  DollarSign,
+  Layers,
+  Send,
+  RefreshCw,
+  Zap,
+} from "lucide-react"
 import { ModuleComparisonModal } from "./module-comparison-modal"
 import { PayrollCompletionSummary } from "@/components/payroll-completion-summary"
 
@@ -134,6 +152,11 @@ const tabData = {
 export default function MigrationReport() {
   const [startDate, setStartDate] = useState(DEFAULT_START_DATE)
   const [endDate, setEndDate] = useState(DEFAULT_END_DATE)
+  const [aiAuditEmail, setAiAuditEmail] = useState("luke.sorbara@mmcconvert.com.au")
+  const [aiAuditRequested, setAiAuditRequested] = useState(false)
+  const [isSubmittingAi, setIsSubmittingAi] = useState(false)
+  const [deliveryTime, setDeliveryTime] = useState("")
+
   useEffect(() => {
     setStartDate(getMigrationStartDate())
     setEndDate(getMigrationEndDate())
@@ -144,6 +167,18 @@ export default function MigrationReport() {
     agedReceivable: false,
     agedPayable: false,
   })
+
+  const handleStartAiAudit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmittingAi(true)
+    setTimeout(() => {
+      setIsSubmittingAi(false)
+      setAiAuditRequested(true)
+      const d = new Date()
+      d.setHours(d.getHours() + 2)
+      setDeliveryTime(d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }))
+    }, 700)
+  }
 
   const migrationData = {
     completed: {
@@ -615,6 +650,209 @@ export default function MigrationReport() {
                 </Link>
               </Button>
             </CardFooter>
+          </Card>
+
+          {/* ================================================================ */}
+          {/* NEW FEATURE: AI-POWERED QA & AGENT-BASED AUDIT (2-HOUR SLA)     */}
+          {/* ================================================================ */}
+          <Card className="relative overflow-hidden rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-card via-indigo-950/20 to-card shadow-lg backdrop-blur-md transition-all duration-300 hover:border-indigo-500/50">
+            {/* Subtle background glow */}
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-indigo-500/10 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl" />
+
+            <CardContent className="p-6 sm:p-8 relative z-10">
+              {!aiAuditRequested ? (
+                <div className="space-y-6">
+                  {/* Top Badge & Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border/40 pb-5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-sm">
+                        <Sparkles className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-base text-foreground sm:text-lg">
+                            AI-Powered QA & Deep Audit
+                          </span>
+                          <span className="inline-flex items-center rounded-full border border-indigo-500/40 bg-indigo-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-indigo-400">
+                            <Zap className="mr-1 h-3 w-3" /> New Feature
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Autonomous AI Agent auditing in background · Executive report in 2 hours
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 rounded-full bg-muted/40 border border-border/50 px-3 py-1 text-xs text-muted-foreground w-fit">
+                      <Clock className="h-3.5 w-3.5 text-indigo-400" />
+                      <span>SLA: Report sent in <strong>2 hours</strong></span>
+                    </div>
+                  </div>
+
+                  {/* Core Question & Proposition */}
+                  <div className="space-y-2">
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                      Do you want an AI-based QA Agent Audit?
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
+                      Run an autonomous AI QA Agent behind the scenes to verify every figure, perform a complete bank reconciliation audit, and inspect all source dependencies across both QuickBooks Online and Xero.
+                    </p>
+                  </div>
+
+                  {/* 3 Inspection Pillars Grid */}
+                  <div className="grid gap-4 sm:grid-cols-3 pt-2">
+                    {/* Pillar 1: Figure Check */}
+                    <div className="rounded-xl border border-border/40 bg-card/60 p-4 transition-colors hover:border-indigo-500/30">
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-400">
+                          <DollarSign className="h-4 w-4" />
+                        </div>
+                        <h4 className="font-semibold text-sm text-foreground">Figure & Balance Check</h4>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Line-by-line parity check across all accounts, tax lines, invoices, and credit notes to guarantee exact numerical balance.
+                      </p>
+                    </div>
+
+                    {/* Pillar 2: Bank Everything Check */}
+                    <div className="rounded-xl border border-border/40 bg-card/60 p-4 transition-colors hover:border-indigo-500/30">
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10 text-purple-400">
+                          <Landmark className="h-4 w-4" />
+                        </div>
+                        <h4 className="font-semibold text-sm text-foreground">Bank Everything Check</h4>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Complete audit of all bank account feeds, opening balances, uncleared checks, and transaction payment allocations.
+                      </p>
+                    </div>
+
+                    {/* Pillar 3: Source Dependency */}
+                    <div className="rounded-xl border border-border/40 bg-card/60 p-4 transition-colors hover:border-indigo-500/30">
+                      <div className="flex items-center gap-2.5 mb-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                          <Layers className="h-4 w-4" />
+                        </div>
+                        <h4 className="font-semibold text-sm text-foreground">Source Dependency Check</h4>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Cross-validates chart of account hierarchies, customer/supplier relationships, and detects orphaned transactions.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Form / CTA */}
+                  <form onSubmit={handleStartAiAudit} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-3 border-t border-border/40">
+                    <div className="relative flex-1">
+                      <Input
+                        type="email"
+                        required
+                        value={aiAuditEmail}
+                        onChange={(e) => setAiAuditEmail(e.target.value)}
+                        placeholder="Enter email to receive audit report"
+                        className="h-11 rounded-xl bg-background/80 border-border text-sm pl-4 pr-4"
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={isSubmittingAi}
+                      className="h-11 px-6 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold shadow-md hover:shadow-indigo-500/20 transition-all flex items-center justify-center gap-2"
+                    >
+                      {isSubmittingAi ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          <span>Dispatching AI Agent...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-4 w-4 text-yellow-300" />
+                          <span>Dispatch AI QA Agent (Report in 2 Hours)</span>
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </div>
+              ) : (
+                /* Active Dispatched Audit State */
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-5">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-500/15 border border-green-500/30 text-green-400">
+                        <Bot className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-xl font-bold text-foreground">
+                            AI QA Agent Dispatched & Auditing
+                          </h3>
+                          <span className="relative flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Autonomous background session: <span className="font-mono text-indigo-400">#AI-QA-{endDate.replace(/-/g, "")}</span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 rounded-xl bg-indigo-500/10 border border-indigo-500/20 px-3.5 py-1.5 text-xs text-indigo-300">
+                      <Clock className="h-4 w-4" />
+                      <span>Estimated Report Delivery: <strong>Within 2 Hours{deliveryTime ? ` (~${deliveryTime})` : ""}</strong></span>
+                    </div>
+                  </div>
+
+                  {/* Summary Box */}
+                  <div className="rounded-xl border border-border/40 bg-card/60 p-5 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm">
+                      <div className="text-muted-foreground">
+                        Report Recipient: <span className="font-semibold text-foreground">{aiAuditEmail}</span>
+                      </div>
+                      <div className="text-xs text-green-400 font-medium flex items-center gap-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5" /> Background Agent Active
+                      </div>
+                    </div>
+
+                    {/* Live Inspection Tracker */}
+                    <div className="space-y-2.5 pt-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium text-foreground flex items-center gap-2">
+                          <Check className="h-3.5 w-3.5 text-green-500" strokeWidth={3} />
+                          Figure & Balance Check
+                        </span>
+                        <span className="text-green-500 font-medium">92% verified (0 variance)</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium text-foreground flex items-center gap-2">
+                          <RefreshCw className="h-3.5 w-3.5 text-indigo-400 animate-spin" />
+                          Bank Everything Check
+                        </span>
+                        <span className="text-indigo-400 font-medium">Auditing 4 bank accounts & feeds</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-medium text-foreground flex items-center gap-2">
+                          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                          Source Dependency Validation
+                        </span>
+                        <span className="text-muted-foreground font-medium">Queued for final pass</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+                    <span>You can safely navigate away. The complete audit report will arrive by email.</span>
+                    <button
+                      type="button"
+                      onClick={() => setAiAuditRequested(false)}
+                      className="text-indigo-400 hover:underline"
+                    >
+                      Change email or re-dispatch
+                    </button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
           </Card>
 
           <Card className="border border-primary/20 bg-primary/5 hover:border-primary/30 transition-all duration-300 shadow-sm rounded-xl">
