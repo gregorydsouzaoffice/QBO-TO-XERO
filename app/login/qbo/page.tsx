@@ -98,15 +98,15 @@ function QuickBooksAuthFlow() {
         <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6">
           {/* Top Intuit Logo with product dots */}
           <div className="mb-6 flex flex-col items-center">
-            {/* Intuit wordmark */}
-            <div className="flex items-center gap-1">
-              <span className="text-3xl font-extrabold tracking-tight text-[#393a3d]">in</span>
-              <span className="text-3xl font-extrabold tracking-tight text-[#0077c5]">Tui</span>
-              <span className="text-3xl font-extrabold tracking-tight text-[#393a3d]">T</span>
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/qbo/intuit-logo.png"
+              alt="Intuit"
+              className="h-10 w-auto object-contain"
+            />
 
             {/* Product icons row: turbotax, quickbooks, mint */}
-            <div className="mt-2 flex items-center gap-4 text-xs font-medium text-[#6b6c72]">
+            <div className="mt-2.5 flex items-center gap-4 text-xs font-medium text-[#6b6c72]">
               <span className="flex items-center gap-1">
                 <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#d52b1e] text-[9px] font-bold text-white">
                   ✓
@@ -262,13 +262,13 @@ function QuickBooksAuthFlow() {
       {step === "company" && (
         <div className="flex-1 flex flex-col items-center">
           {/* Top Charcoal Header Bar */}
-          <header className="w-full bg-[#333333] px-6 py-3.5 flex items-center justify-between text-white shadow-xs">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2ca01c] text-xs font-bold text-white shadow-xs">
-                qb
-              </span>
-              <span className="text-base font-bold tracking-tight">quickbooks.</span>
-            </div>
+          <header className="w-full bg-[#333333] px-6 py-3 flex items-center justify-between text-white shadow-xs">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/qbo/quickbooks-logo-white.webp"
+              alt="Intuit QuickBooks"
+              className="h-7 w-auto object-contain"
+            />
             <div className="text-xs text-gray-300">
               Welcome Luke,{" "}
               <button
@@ -368,9 +368,15 @@ function QuickBooksAuthFlow() {
             </div>
 
             {/* Footer */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#6b6c72] gap-2">
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#6b6c72] gap-3">
               <span>©2026 Intuit Inc. All rights reserved.</span>
               <div className="flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/qbo/intuit-logo.png"
+                  alt="Intuit"
+                  className="h-3.5 w-auto object-contain opacity-75"
+                />
                 <span className="flex items-center gap-1">
                   <span className="h-2 w-2 rounded-full bg-[#d52b1e]" /> turbotax
                 </span>
@@ -392,13 +398,13 @@ function QuickBooksAuthFlow() {
       {step === "consent" && (
         <div className="flex-1 flex flex-col items-center">
           {/* Top Charcoal Header Bar */}
-          <header className="w-full bg-[#333333] px-6 py-3.5 flex items-center justify-between text-white shadow-xs">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2ca01c] text-xs font-bold text-white shadow-xs">
-                qb
-              </span>
-              <span className="text-base font-bold tracking-tight">quickbooks.</span>
-            </div>
+          <header className="w-full bg-[#333333] px-6 py-3 flex items-center justify-between text-white shadow-xs">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/qbo/quickbooks-logo-white.webp"
+              alt="Intuit QuickBooks"
+              className="h-7 w-auto object-contain"
+            />
             <div className="text-xs text-gray-300">
               Welcome Luke,{" "}
               <button
@@ -416,9 +422,12 @@ function QuickBooksAuthFlow() {
             <div className="rounded-lg border border-[#d4d7dc] bg-white p-6 sm:p-10 shadow-sm">
               {/* Green circular QB icon header banner */}
               <div className="flex items-center gap-4 mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2ca01c] text-white font-bold text-xl shadow-xs">
-                  qb
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/qbo/quickbooks-logo-black.webp"
+                  alt="Intuit QuickBooks"
+                  className="h-10 w-auto object-contain"
+                />
                 <div className="text-base sm:text-lg font-semibold text-[#393a3d]">
                   Connecting <span className="font-bold">MMC Convert</span> to{" "}
                   <span className="font-bold">{selectedCompany.name}</span>
@@ -514,9 +523,15 @@ function QuickBooksAuthFlow() {
             </div>
 
             {/* Footer */}
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#6b6c72] gap-2">
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#6b6c72] gap-3">
               <span>©2026 Intuit Inc. All rights reserved.</span>
               <div className="flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/qbo/intuit-logo.png"
+                  alt="Intuit"
+                  className="h-3.5 w-auto object-contain opacity-75"
+                />
                 <span className="flex items-center gap-1">
                   <span className="h-2 w-2 rounded-full bg-[#d52b1e]" /> turbotax
                 </span>
