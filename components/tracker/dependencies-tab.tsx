@@ -2,7 +2,7 @@
 
 import { useMemo } from "react"
 import { AlertTriangle, ArrowRight, CheckCircle2, CreditCard, Landmark, Users, XCircle } from "lucide-react"
-import { GojeeMark, QuickBooksMark, XeroMark } from "@/components/brand"
+import { QuickBooksMark, XeroMark } from "@/components/brand"
 import { useIssues } from "@/lib/demo-store"
 import { dependencyLinks, dependencySources, HEALTH_LABEL, type DependencyLink, type DependencySource, type LinkHealth } from "@/lib/tracker/dependencies"
 import { IssueLinks, Pill } from "./pills"
@@ -72,7 +72,6 @@ function Legend() {
 }
 
 function SourceIcon({ s }: { s: DependencySource }) {
-  if (s.system === "gojee") return <GojeeMark size={28} />
   if (s.system === "xero") return <XeroMark size={28} />
   if (s.system === "qbo") return <QuickBooksMark size={28} />
   const Icon = s.key === "amex" ? CreditCard : s.system === "people" ? Users : Landmark

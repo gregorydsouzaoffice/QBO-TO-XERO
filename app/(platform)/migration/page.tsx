@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { ArrowRight, CalendarCheck2, CheckCircle2, CircleDashed, Database, LayoutDashboard } from "lucide-react"
-import { GojeeLogo, GojeeMark, QuickBooksLogo, QuickBooksMark, SystemChip, XeroMark, XeroWordmark } from "@/components/brand"
+import { QuickBooksLogo, QuickBooksMark, SystemChip, XeroMark, XeroWordmark } from "@/components/brand"
 import { StatTile } from "@/components/figures"
 import MigrationReportList from "@/components/migration/report-list"
 import MigrationStepper from "@/components/migration/stepper"
@@ -11,7 +11,7 @@ import PageHeader, { PageBody } from "@/components/shell/page-header"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { conversionDate, formatDateTime, formatShort, migratedThrough, parallelRunDay } from "@/lib/clock"
-import { COMPANY, GOJEE_ACCOUNT, QBO_COMPANY, XERO_ORG } from "@/lib/data/company"
+import { COMPANY, QBO_COMPANY, XERO_ORG } from "@/lib/data/company"
 import { HISTORY_OPTIONS, WIZARD_STEPS, scanRows, scanTotals, scopeWindow, stepHref } from "@/lib/data/migration"
 import { fmtInt } from "@/lib/format"
 import { useDemo } from "@/lib/demo-store"
@@ -27,17 +27,17 @@ export default function MigrationOverview() {
 
 function InProgress() {
   const { state } = useDemo()
-  const { step, status, history, gojeeEnabled } = state.migration
+  const { step, status, history } = state.migration
   const imported = status === "in-progress" && step >= 6
   const furthest = Math.max(1, Math.min(6, step))
   const pct = imported ? 92 : Math.round(((furthest - 1) / WIZARD_STEPS.length) * 100)
   const started = furthest > 1 || state.qbo.connected || state.xero.connected
-  const totals = scanTotals(history, gojeeEnabled)
+  const totals = scanTotals(history)
   const current = WIZARD_STEPS[furthest - 1]
 
   return (
     <>
-      <PageHeader eyebrow={COMPANY.name} title="Migration" description="Move your books from QuickBooks Online to Xero, with jobs, quotes, purchase orders and inventory going to Gojee." />
+      <PageHeader eyebrow={COMPANY.name} title="Migration" description="Move your books from QuickBooks Online to Xero." />
       <PageBody>
         <MigrationStepper current={furthest} />
 
@@ -46,12 +46,6 @@ function InProgress() {
             <QuickBooksLogo height={28} />
             <ArrowRight className="h-5 w-5 text-primary" />
             <XeroWordmark height={22} />
-            {gojeeEnabled && (
-              <>
-                <span className="text-muted-foreground">+</span>
-                <GojeeLogo height={24} />
-              </>
-            )}
           </div>
           <div className="grid gap-6 p-6 lg:grid-cols-[1.3fr_1fr]">
             <div>
@@ -76,8 +70,6 @@ function InProgress() {
               <dd>{state.qbo.connected ? <Connected /> : <NotConnected />}</dd>
               <dt className="text-muted-foreground">Xero</dt>
               <dd>{state.xero.connected ? <Connected /> : <NotConnected />}</dd>
-              <dt className="text-muted-foreground">Gojee</dt>
-              <dd>{!gojeeEnabled ? <span className="pill-muted">Off</span> : state.gojee.connected ? <Connected /> : <NotConnected />}</dd>
               <dt className="text-muted-foreground">History</dt>
               <dd className="font-medium">{HISTORY_OPTIONS.find((o) => o.key === history)?.label}</dd>
               <dt className="text-muted-foreground">Conversion date</dt>
@@ -139,10 +131,10 @@ function NotConnected() {
 
 function Summary() {
   const { state } = useDemo()
-  const { history, gojeeEnabled, completedAt } = state.migration
+  const { history, completedAt } = state.migration
   const w = scopeWindow(history)
-  const rows = useMemo(() => scanRows(history, gojeeEnabled), [history, gojeeEnabled])
-  const totals = useMemo(() => scanTotals(history, gojeeEnabled), [history, gojeeEnabled])
+  const rows = useMemo(() => scanRows(history), [history])
+  const totals = useMemo(() => scanTotals(history), [history])
   const v = useMemo(() => validationSummary(history), [history])
 
   return (
@@ -161,7 +153,7 @@ function Summary() {
       />
       <PageBody>
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatTile label="Records migrated" value={fmtInt(totals.total)} sub={`${fmtInt(totals.xero)} to Xero${gojeeEnabled ? `, ${fmtInt(totals.gojee)} to Gojee` : ""}`} icon={<Database className="h-4 w-4" />} tone="info" />
+          <StatTile label="Records migrated" value={fmtInt(totals.total)} sub={`${fmtInt(totals.xero)} to Xero`} icon={<Database className="h-4 w-4" />} tone="info" />
           <StatTile label="Conversion date" value={formatShort(conversionDate())} sub={`History migrated through ${formatShort(migratedThrough())}`} icon={<CalendarCheck2 className="h-4 w-4" />} />
           <StatTile label="Validation" value={v.pass ? "All match" : "Differences"} sub={`${v.checks} checks, QuickBooks vs Xero`} icon={<CheckCircle2 className="h-4 w-4" />} tone={v.pass ? "success" : "danger"} />
           <StatTile label="History" value={HISTORY_OPTIONS.find((o) => o.key === history)?.label.replace(/ \(.*\)/, "") ?? ""} sub={w.describe} />
@@ -230,17 +222,6 @@ function Summary() {
                   </div>
                 </div>
               </li>
-              {gojeeEnabled && (
-                <li className="flex items-center gap-3 px-5 py-3">
-                  <GojeeMark size={28} />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">Gojee</div>
-                    <div className="truncate text-xs text-muted-foreground">
-                      {GOJEE_ACCOUNT.name} · {GOJEE_ACCOUNT.id} · signed in with Xero
-                    </div>
-                  </div>
-                </li>
-              )}
             </ul>
             <div className="space-y-2 border-t border-border p-5">
               <Button asChild className="w-full">
@@ -255,7 +236,7 @@ function Summary() {
           </section>
         </div>
 
-        <MigrationReportList scope={history} gojeeEnabled={gojeeEnabled} />
+        <MigrationReportList scope={history} />
       </PageBody>
     </>
   )

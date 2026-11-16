@@ -10,8 +10,8 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-sans", display: "swap" })
 
 export const metadata: Metadata = {
-  title: `${brand.productName} | QuickBooks Online to Xero + Gojee`,
-  description: `${brand.tagline}. Migration, financial tracker, reporting and AI financial QA. Powered by MMC Convert.`,
+  title: `${brand.productName} | QuickBooks Online to Xero Migration`,
+  description: `${brand.tagline}. Migration, financial tracker, reporting and AI financial QA.`,
 }
 
 export default function RootLayout({

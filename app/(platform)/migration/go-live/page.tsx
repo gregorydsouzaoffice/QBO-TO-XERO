@@ -17,12 +17,12 @@ interface Task {
   key: string
   title: string
   detail: string
-  system: "xero" | "gojee" | "qbo"
+  system: "xero" | "qbo"
   /** Already done by the migration */
   auto?: boolean
 }
 
-function tasks(gojee: boolean): Task[] {
+function tasks(): Task[] {
   return [
     { key: "history", title: "History migrated and validated", detail: `Trial balance, P&L, balance sheet, ageing, bank and GST all agree at ${formatShort(migratedThrough())}.`, system: "xero", auto: true },
     { key: "feeds", title: "Connect bank feeds in Xero", detail: `${BANK_ACCOUNTS.map((b) => `${b.name} (${b.feed})`).join(", ")}. Start each feed from ${formatShort(conversionDate())}.`, system: "xero" },
@@ -30,7 +30,7 @@ function tasks(gojee: boolean): Task[] {
     { key: "rules", title: "Recreate bank rules", detail: "64 QuickBooks bank rules are in the archive pack, ready to set up as Xero bank rules.", system: "xero" },
     { key: "repeating", title: "Recreate repeating invoices and bills", detail: "11 recurring templates: 7 maintenance contract invoices, 4 bills (rent, software, insurance, vehicle finance).", system: "xero" },
     { key: "budgets", title: "Enter budgets", detail: "Budget CSV exported from QuickBooks, ready for Xero's budget manager.", system: "xero" },
-    { key: "users", title: gojee ? "Invite users to Xero and Gojee" : "Invite users to Xero", detail: `Finance team and your accountant into ${XERO_ORG.name}${gojee ? "; supervisors and field staff into Gojee" : ""}.`, system: gojee ? "gojee" : "xero" },
+    { key: "users", title: "Invite users to Xero", detail: `Finance team and your accountant into ${XERO_ORG.name}.`, system: "xero" },
     { key: "keep-qbo", title: "Keep QuickBooks for the parallel run", detail: "Don't cancel the QuickBooks subscription yet. Keep entering in both until AI QA shows no exceptions, then switch QuickBooks to read-only.", system: "qbo" },
   ]
 }
@@ -38,8 +38,8 @@ function tasks(gojee: boolean): Task[] {
 export default function GoLivePage() {
   const router = useRouter()
   const { state, update } = useDemo()
-  const { history, gojeeEnabled, status, step } = state.migration
-  const list = tasks(gojeeEnabled)
+  const { history, status, step } = state.migration
+  const list = tasks()
   const [done, setDone] = useState<Record<string, boolean>>({})
   const [starting, setStarting] = useState(false)
   const imported = status === "completed" || (status === "in-progress" && step >= 6)
@@ -135,12 +135,12 @@ export default function GoLivePage() {
             </div>
           </div>
           <div className="border-t border-border px-5 py-3 text-xs text-muted-foreground">
-            History: {history === "all" ? "all" : history === "balances" ? "opening balances only" : history === "3fy" ? "last 3 financial years" : "last 2 financial years"} · Gojee {gojeeEnabled ? "on" : "off"}
+            History: {history === "all" ? "all" : history === "balances" ? "opening balances only" : history === "3fy" ? "last 3 financial years" : "last 2 financial years"}
           </div>
         </section>
       </div>
 
-      <MigrationReportList scope={history} gojeeEnabled={gojeeEnabled} />
+      <MigrationReportList scope={history} />
     </StepShell>
   )
 }

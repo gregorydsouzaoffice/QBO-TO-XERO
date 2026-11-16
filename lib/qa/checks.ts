@@ -37,7 +37,7 @@ export const AREAS: { key: QaArea; label: string; responsibility: string; descri
     key: "dependencies",
     label: "Source dependencies",
     responsibility: "Check dependencies between financial data sources",
-    description: "Figures in Xero that depend on Gojee, Xero Payroll or system accounts.",
+    description: "Figures in Xero that depend on Xero Payroll, project tracking or system accounts.",
   },
   {
     key: "entries",
@@ -474,41 +474,41 @@ export const CHECKS: CheckDef[] = [
   {
     id: "DEP-01",
     area: "dependencies",
-    name: "Gojee job WIP agrees with Xero Work in Progress",
-    compares: "Xero Work in Progress (635) against the WIP on open jobs in Gojee",
-    sources: ["gojee", "xero"],
-    sourceLabel: "Gojee jobs",
+    name: "Project WIP agrees with Xero Work in Progress",
+    compares: "Xero Work in Progress (635) against QuickBooks project WIP",
+    sources: ["qbo", "xero"],
+    sourceLabel: "QuickBooks Projects",
     watches: ["EX-1048"],
     measure: (c) => {
       const x = nat("1300", c.xbs)
       const g = round2(x - (c.openIds.has("EX-1048") ? 12650 : 0))
-      return measure([{ label: "Work in progress", xero: x, source: g, kind: "money" }], x - g, "money", Math.abs(x - g) < CENT ? "Xero WIP equals the Gojee job ledger." : `Xero WIP is ${money(x - g)} above the Gojee job ledger: a WIP release journal did not post.`)
+      return measure([{ label: "Work in progress", xero: x, source: g, kind: "money" }], x - g, "money", Math.abs(x - g) < CENT ? "Xero WIP equals QuickBooks project WIP." : `Xero WIP is ${money(x - g)} above project WIP: a WIP release journal did not post.`)
     },
   },
   {
     id: "DEP-02",
     area: "dependencies",
-    name: "Gojee progress claims synced to Xero",
-    compares: "Progress claims raised in Gojee against invoices received in Xero",
-    sources: ["gojee", "xero"],
-    sourceLabel: "Gojee",
+    name: "Progress invoices agree between QuickBooks and Xero",
+    compares: "Progress invoices raised in QuickBooks against invoices in Xero",
+    sources: ["qbo", "xero"],
+    sourceLabel: "QuickBooks",
     watches: [],
     measure: (c) => {
       const n = Math.max(1, Math.round(daysSinceConv(c) * 0.45))
-      return measure([{ label: "Progress claims since conversion", xero: n, source: n, kind: "int" }], 0, "count", "Every Gojee claim arrived in Xero as an invoice.")
+      return measure([{ label: "Progress invoices since conversion", xero: n, source: n, kind: "int" }], 0, "count", "Every progress invoice arrived in Xero.")
     },
   },
   {
     id: "DEP-03",
     area: "dependencies",
-    name: "Gojee inventory value agrees with Xero",
-    compares: "Xero Inventory (630) against Gojee item quantities × average cost",
-    sources: ["gojee", "xero"],
-    sourceLabel: "Gojee items",
+    name: "Inventory asset value agrees between QuickBooks and Xero",
+    compares: "Xero Inventory (630) against QuickBooks Inventory Asset (1200)",
+    sources: ["qbo", "xero"],
+    sourceLabel: "QuickBooks",
     watches: [],
     measure: (c) => {
       const x = nat("1200", c.xbs)
-      return measure([{ label: "Inventory value", xero: x, source: x, kind: "money" }], 0, "money", "Inventory value agrees with Gojee stock on hand.")
+      return measure([{ label: "Inventory value", xero: x, source: x, kind: "money" }], 0, "money", "Inventory value agrees between QuickBooks and Xero.")
     },
   },
   {

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useState, type ReactNode } from "react"
 import { toast } from "sonner"
 import { AlertTriangle, CheckCircle2, CircleSlash, Landmark, Link2, Unplug } from "lucide-react"
-import { GojeeMark, QuickBooksMark, XeroMark } from "@/components/brand"
+import { QuickBooksMark, XeroMark } from "@/components/brand"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,16 +18,15 @@ import {
 import { Button } from "@/components/ui/button"
 import { formatTime } from "@/lib/clock"
 import { feedStatuses } from "@/lib/data/bank"
-import { BANK_ACCOUNTS, GOJEE_ACCOUNT, QBO_COMPANY, XERO_ORG } from "@/lib/data/company"
+import { BANK_ACCOUNTS, QBO_COMPANY, XERO_ORG } from "@/lib/data/company"
 import { useDemo } from "@/lib/demo-store"
 
-type Target = "qbo" | "xero" | "gojee"
+type Target = "qbo" | "xero"
 
-const NAME: Record<Target, string> = { qbo: "QuickBooks Online", xero: "Xero", gojee: "Gojee" }
+const NAME: Record<Target, string> = { qbo: "QuickBooks Online", xero: "Xero" }
 const DISCONNECT_TEXT: Record<Target, string> = {
   qbo: "The AI QA engine stops comparing QuickBooks with Xero until you reconnect. Nothing is deleted in QuickBooks, and you can reconnect at any time through Intuit's sign-in.",
-  xero: "The AI QA engine, the tracker and reports stop receiving Xero data until you reconnect. Gojee also signs in through Xero, so it is disconnected too.",
-  gojee: "Job WIP, progress claims and inventory checks stop until you reconnect. Xero is not affected.",
+  xero: "The AI QA engine, the tracker and reports stop receiving Xero data until you reconnect.",
 }
 
 export function Connections() {
@@ -39,16 +38,15 @@ export function Connections() {
   const disconnect = (t: Target) => {
     update((s) => {
       if (t === "qbo") return { ...s, qbo: { ...s.qbo, connected: false } }
-      if (t === "xero") return { ...s, xero: { ...s.xero, connected: false }, gojee: { connected: false } }
-      return { ...s, gojee: { connected: false } }
+      return { ...s, xero: { ...s.xero, connected: false } }
     })
     toast(`${NAME[t]} disconnected`, { description: "Simulated in this demo. Reconnect from this page." })
   }
 
   const connect = (t: Target) => {
     if (t === "qbo") return router.push("/connect/quickbooks?return=/settings")
-    update((s) => (t === "xero" ? { ...s, xero: { ...s.xero, connected: true } } : { ...s, gojee: { connected: true } }))
-    toast.success(`${NAME[t]} connected`, { description: t === "gojee" ? "Signed in automatically through Xero (simulated)." : "Simulated sign-in for this demo." })
+    update((s) => ({ ...s, xero: { ...s.xero, connected: true } }))
+    toast.success(`${NAME[t]} connected`, { description: "Simulated sign-in for this demo." })
   }
 
   const feedList = feedStatuses()
@@ -79,17 +77,6 @@ export function Connections() {
           connectLabel="Connect Xero"
           onConnect={() => connect("xero")}
           onDisconnect={() => setConfirm("xero")}
-        />
-        <ConnectionRow
-          logo={<GojeeMark size={36} />}
-          name="Gojee"
-          connected={state.gojee.connected}
-          details={[`${GOJEE_ACCOUNT.name} · account ${GOJEE_ACCOUNT.id}`, "Jobs, quotes, purchase orders, inventory and timesheets", "Signs in through Xero"]}
-          connectLabel="Connect Gojee"
-          connectDisabled={!state.xero.connected}
-          connectHint={!state.xero.connected ? "Connect Xero first" : undefined}
-          onConnect={() => connect("gojee")}
-          onDisconnect={() => setConfirm("gojee")}
         />
       </ul>
 

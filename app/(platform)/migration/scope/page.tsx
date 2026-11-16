@@ -14,10 +14,10 @@ import { cn } from "@/lib/utils"
 export default function ScopePage() {
   const router = useRouter()
   const { state, update } = useDemo()
-  const { history, gojeeEnabled } = state.migration
+  const { history } = state.migration
   const w = useMemo(() => scopeWindow(history), [history])
-  const rows = useMemo(() => scanRows(history, gojeeEnabled), [history, gojeeEnabled])
-  const totals = useMemo(() => scanTotals(history, gojeeEnabled), [history, gojeeEnabled])
+  const rows = useMemo(() => scanRows(history), [history])
+  const totals = useMemo(() => scanTotals(history), [history])
   const checks = useMemo(() => preConversionChecks(), [])
   const warnings = checks.filter((c) => c.status === "warning").length
 
@@ -41,7 +41,7 @@ export default function ScopePage() {
             {HISTORY_OPTIONS.map((o) => {
               const on = o.key === history
               const ow = scopeWindow(o.key)
-              const t = scanTotals(o.key, gojeeEnabled)
+              const t = scanTotals(o.key)
               return (
                 <button
                   key={o.key}
@@ -92,7 +92,7 @@ export default function ScopePage() {
                 <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full bg-muted-foreground/60" aria-hidden />
                 <div className="font-semibold">Up to {formatShort(migratedThrough())}</div>
                 <p className="text-muted-foreground">
-                  History moves to Xero{gojeeEnabled ? " and Gojee" : ""}. {w.summaryMonths > 0 && w.detailFrom ? `Before ${formatShort(w.detailFrom)}, ${w.summaryMonths} months come across as monthly balances so comparative reports still work.` : w.detailFrom ? "Every transaction comes across in full detail." : `Balances at ${formatShort(migratedThrough())}, open invoices and bills, and ${w.summaryMonths} months of monthly balances for comparatives.`}
+                  History moves to Xero. {w.summaryMonths > 0 && w.detailFrom ? `Before ${formatShort(w.detailFrom)}, ${w.summaryMonths} months come across as monthly balances so comparative reports still work.` : w.detailFrom ? "Every transaction comes across in full detail." : `Balances at ${formatShort(migratedThrough())}, open invoices and bills, and ${w.summaryMonths} months of monthly balances for comparatives.`}
                 </p>
               </li>
               <li>
@@ -126,7 +126,6 @@ export default function ScopePage() {
           </div>
           <div className="flex flex-wrap gap-2 text-xs">
             <span className="pill-info">{fmtInt(totals.xero)} to Xero</span>
-            {gojeeEnabled ? <span className="pill-info">{fmtInt(totals.gojee)} to Gojee</span> : <span className="pill-muted">Gojee off</span>}
           </div>
         </div>
         <div className="overflow-x-auto">

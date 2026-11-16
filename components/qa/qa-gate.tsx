@@ -18,7 +18,7 @@ export function QaGate({ children }: { children: ReactNode }) {
   if (state.migration.status === "completed") return <>{children}</>
   return (
     <>
-      <PageHeader eyebrow={COMPANY.name} title="AI Financial QA" description="Checks QuickBooks Online against Xero, the bank and Gojee every 2 hours during the parallel run." />
+      <PageHeader eyebrow={COMPANY.name} title="AI Financial QA" description="Checks QuickBooks Online against Xero and the bank every 2 hours during the parallel run." />
       <PageBody>
         <section className="panel mx-auto max-w-2xl p-8 text-center">
           <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-accent text-primary">

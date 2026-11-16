@@ -12,7 +12,7 @@ import type { RunResult } from "@/lib/qa/types"
 import { cn } from "@/lib/utils"
 
 const STAGES = [
-  { key: "collect", n: 1, label: "Data collection", text: "Fetch QuickBooks, Xero, bank feeds and Gojee", icon: Database, steps: ["QuickBooks Online", "Xero", "Bank and card feeds", "Gojee"] },
+  { key: "collect", n: 1, label: "Data collection", text: "Fetch QuickBooks, Xero and bank feeds", icon: Database, steps: ["QuickBooks Online", "Xero", "Bank and card feeds"] },
   { key: "validate", n: 2, label: "AI validation", text: "Figures, dependencies, reconciliations, inconsistencies", icon: ScanSearch, steps: ["Figures vs source", "Bank three-way match", "QuickBooks vs Xero", "Dependencies", "Entries", "Calculations"] },
   { key: "detect", n: 3, label: "Exception detection", text: "Flag items for human review", icon: Flag, steps: ["Comparing with the last run", "Scoring confidence", "Flagging manual review"] },
   { key: "report", n: 4, label: "Report generation", text: "Findings, evidence and recommendations", icon: FileText, steps: ["Summary", "Exceptions and evidence", "All checks", "Recommendations"] },

@@ -48,15 +48,13 @@ const TABS = [
 
 export default function MapPage() {
   const router = useRouter()
-  const { state } = useDemo()
-  const gojee = state.migration.gojeeEnabled
   const [tab, setTab] = useState("accounts")
 
   return (
     <StepShell
       step={3}
       title="Check how everything maps"
-      description="We matched every QuickBooks record to its place in Xero or Gojee. Nothing needs changing, but have a look at anything flagged."
+      description="We matched every QuickBooks record to its place in Xero. Nothing needs changing, but have a look at anything flagged."
       next={{ to: "Validate", onClick: () => router.push("/migration/validate") }}
       footerNote="All mappings complete"
     >
@@ -84,16 +82,16 @@ export default function MapPage() {
           <ContactsTab />
         </TabsContent>
         <TabsContent value="items" className="mt-5">
-          <ItemsTab gojee={gojee} />
+          <ItemsTab />
         </TabsContent>
         <TabsContent value="projects" className="mt-5">
-          <ProjectsTab gojee={gojee} />
+          <ProjectsTab />
         </TabsContent>
         <TabsContent value="estimates" className="mt-5">
-          <EstimatesTab gojee={gojee} />
+          <EstimatesTab />
         </TabsContent>
         <TabsContent value="pos" className="mt-5">
-          <PosTab gojee={gojee} />
+          <PosTab />
         </TabsContent>
         <TabsContent value="excluded" className="mt-5">
           <ExcludedTab />
@@ -120,14 +118,6 @@ function Panel({ title, sub, right, children }: { title: string; sub?: ReactNode
 
 function Arrow() {
   return <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" aria-label="maps to" />
-}
-
-function GojeeOff() {
-  return (
-    <Banner tone="info">
-      Gojee is switched off (step 1), so these records are archived as PDF and CSV instead of being migrated. Switch Gojee on to bring them across as live records.
-    </Banner>
-  )
 }
 
 // ---------------------------------------------------------------------------
@@ -310,7 +300,7 @@ function ContactsTab() {
         <Mini label="Duplicates merged" value={fmtInt(c.customers.merged + c.vendors.merged)} sub="Same ABN or same name and email" />
         <Mini label="Employees" value={fmtInt(c.employees.qbo)} sub="Details only; pay history archived" />
       </div>
-      <Panel title="Contacts (sample)" sub={`${c.customers.qbo + c.vendors.qbo - c.customers.merged - c.vendors.merged} Xero contacts after merging. Customers are shared with Gojee through Xero.`}>
+      <Panel title="Contacts (sample)" sub={`${c.customers.qbo + c.vendors.qbo - c.customers.merged - c.vendors.merged} Xero contacts after merging.`}>
         <table className="data-table">
           <thead>
             <tr>
@@ -345,7 +335,7 @@ function ContactsTab() {
   )
 }
 
-function ItemsTab({ gojee }: { gojee: boolean }) {
+function ItemsTab() {
   const inv = useMemo(() => inventoryItems(), [])
   const svcCount = QBO_ENTITIES.find((e) => e.key === "items-service")!.total
   return (
@@ -381,15 +371,14 @@ function ItemsTab({ gojee }: { gojee: boolean }) {
         </table>
       </Panel>
 
-      {!gojee && <GojeeOff />}
       <Panel
         title="Inventory items"
         sub={
           <>
-            {inv.rows.length + inv.other.count} items with quantities → {gojee ? "Gojee stock" : "archive"}. The inventory value of <Money value={inv.total} currency /> stays in Xero account 630 Inventory.
+            {inv.rows.length + inv.other.count} items with quantities → Xero inventory items. The inventory value of <Money value={inv.total} currency /> stays in Xero account 630 Inventory.
           </>
         }
-        right={gojee ? <SystemChip system="gojee" /> : <span className="pill-muted">Archive only</span>}
+        right={<SystemChip system="xero" />}
       >
         <table className="data-table">
           <thead>
@@ -444,22 +433,21 @@ function ItemsTab({ gojee }: { gojee: boolean }) {
   )
 }
 
-function ProjectsTab({ gojee }: { gojee: boolean }) {
+function ProjectsTab() {
   const wip = useMemo(() => wipValue(), [])
   const open = PROJECTS.filter((p) => p.status === "Open")
   const parts = splitByShares(wip, [...open.map((p) => p.wipShare), 1 - open.reduce((t, p) => t + p.wipShare, 0)])
   const conv = conversionDate()
   return (
     <div className="space-y-4">
-      {!gojee && <GojeeOff />}
       <Banner tone="info">
-        Xero has no full job costing, so QuickBooks Projects become Gojee jobs with their income, costs and time. Work in progress of <Money value={wip} currency /> stays in Xero
-        635 and ties to the open jobs in Gojee.
+        QuickBooks Projects map to Xero project tracking with their income, costs and time. Work in progress of <Money value={wip} currency /> stays in Xero
+        635 and ties to the open projects in Xero.
       </Banner>
       <Panel
-        title="Projects → jobs"
-        sub={`${PROJECT_COUNTS.total} projects: ${PROJECT_COUNTS.open} open, ${PROJECT_COUNTS.completed} completed (completed jobs come across closed, for history)`}
-        right={gojee ? <SystemChip system="gojee" /> : <span className="pill-muted">Archive only</span>}
+        title="Projects"
+        sub={`${PROJECT_COUNTS.total} projects: ${PROJECT_COUNTS.open} open, ${PROJECT_COUNTS.completed} completed (completed projects come across closed, for history)`}
+        right={<SystemChip system="xero" />}
       >
         <table className="data-table">
           <thead>
@@ -472,14 +460,14 @@ function ProjectsTab({ gojee }: { gojee: boolean }) {
               <th className="num">Costs to date</th>
               <th className="num">WIP</th>
               <th aria-hidden />
-              <th>Gojee job</th>
+              <th>Xero project</th>
             </tr>
           </thead>
           <tbody>
             {PROJECTS.map((p) => {
               const i = open.indexOf(p)
               return (
-                <tr key={p.gojeeJob}>
+                <tr key={p.xeroJob}>
                   <td className="font-medium">{p.qboName}</td>
                   <td className="text-muted-foreground">{p.customer}</td>
                   <td className="whitespace-nowrap text-muted-foreground">{formatShort(addDays(conv, -p.startDaysAgo))}</td>
@@ -494,7 +482,7 @@ function ProjectsTab({ gojee }: { gojee: boolean }) {
                   <td>
                     <Arrow />
                   </td>
-                  <td className="font-mono text-xs">{gojee ? p.gojeeJob : "Archive"}</td>
+                  <td className="font-mono text-xs">{p.xeroJob}</td>
                 </tr>
               )
             })}
@@ -525,16 +513,15 @@ function ProjectsTab({ gojee }: { gojee: boolean }) {
   )
 }
 
-function EstimatesTab({ gojee }: { gojee: boolean }) {
+function EstimatesTab() {
   const e = QBO_ENTITIES.find((x) => x.key === "estimates")!
   const conv = conversionDate()
   return (
     <div className="space-y-4">
-      {!gojee && <GojeeOff />}
       <Panel
-        title="Open estimates → Gojee quotes"
+        title="Open estimates → Xero quotes"
         sub={`${e.open} open of ${fmtInt(e.total)} estimates. Accepted, closed and expired estimates are archived as PDF.`}
-        right={gojee ? <SystemChip system="gojee" /> : <span className="pill-muted">Archive only</span>}
+        right={<SystemChip system="xero" />}
       >
         <table className="data-table">
           <thead>
@@ -545,7 +532,7 @@ function EstimatesTab({ gojee }: { gojee: boolean }) {
               <th className="num">Amount (inc GST)</th>
               <th>Expires</th>
               <th aria-hidden />
-              <th>Gojee quote</th>
+              <th>Xero quote</th>
             </tr>
           </thead>
           <tbody>
@@ -561,7 +548,7 @@ function EstimatesTab({ gojee }: { gojee: boolean }) {
                 <td>
                   <Arrow />
                 </td>
-                <td className="font-mono text-xs">{gojee ? q.gojeeRef : "Archive"}</td>
+                <td className="font-mono text-xs">{q.xeroRef}</td>
               </tr>
             ))}
             <tr>
@@ -576,15 +563,14 @@ function EstimatesTab({ gojee }: { gojee: boolean }) {
   )
 }
 
-function PosTab({ gojee }: { gojee: boolean }) {
+function PosTab() {
   const e = QBO_ENTITIES.find((x) => x.key === "purchase-orders")!
   return (
     <div className="space-y-4">
-      {!gojee && <GojeeOff />}
       <Panel
-        title="Open purchase orders → Gojee"
-        sub={`${e.open} open of ${fmtInt(e.total)} purchase orders, linked to their Gojee job. Closed POs are archived as PDF.`}
-        right={gojee ? <SystemChip system="gojee" /> : <span className="pill-muted">Archive only</span>}
+        title="Open purchase orders → Xero purchase orders"
+        sub={`${e.open} open of ${fmtInt(e.total)} purchase orders, linked to their project. Closed POs are archived as PDF.`}
+        right={<SystemChip system="xero" />}
       >
         <table className="data-table">
           <thead>
@@ -595,7 +581,7 @@ function PosTab({ gojee }: { gojee: boolean }) {
               <th className="num">Amount (inc GST)</th>
               <th>Received</th>
               <th aria-hidden />
-              <th>Gojee PO</th>
+              <th>Xero PO</th>
             </tr>
           </thead>
           <tbody>
@@ -611,7 +597,7 @@ function PosTab({ gojee }: { gojee: boolean }) {
                 <td>
                   <Arrow />
                 </td>
-                <td className="font-mono text-xs">{gojee ? p.gojeeRef : "Archive"}</td>
+                <td className="font-mono text-xs">{p.xeroRef}</td>
               </tr>
             ))}
             <tr>

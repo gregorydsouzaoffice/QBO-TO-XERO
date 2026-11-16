@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { AlertTriangle, ArrowRight, Banknote, CheckCircle2, CircleDot, FastForward, Landmark, Scale, ShieldCheck, Sparkles, TrendingUp, Wallet } from "lucide-react"
-import { GojeeMark, QuickBooksLogo, QuickBooksMark, SystemChip, XeroMark, XeroWordmark, GojeeLogo } from "@/components/brand"
+import { QuickBooksLogo, QuickBooksMark, SystemChip, XeroMark, XeroWordmark } from "@/components/brand"
 import { TrendChart } from "@/components/charts"
 import { Delta, Money, StatTile, fmtWhole } from "@/components/figures"
 import PageHeader, { PageBody } from "@/components/shell/page-header"
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { conversionDate, formatShort, formatTime, parallelRunDay, periodRange, todayISO } from "@/lib/clock"
 import { feedStatuses } from "@/lib/data/bank"
-import { COMPANY, GOJEE_ACCOUNT, QBO_COMPANY, USER, XERO_ORG } from "@/lib/data/company"
+import { COMPANY, QBO_COMPANY, USER, XERO_ORG } from "@/lib/data/company"
 import { KIND_LABEL, SEVERITY_ORDER, issues } from "@/lib/data/issues"
 import { bankBalances, monthlyTrend, plTotals } from "@/lib/data/ledger"
 
@@ -37,11 +37,11 @@ export default function HomePage() {
 // Before migration: onboarding
 
 const STEPS = [
-  { title: "Connect", text: "QuickBooks Online (Intuit sign-in), Xero and Gojee" },
+  { title: "Connect", text: "QuickBooks Online (Intuit sign-in) and Xero" },
   { title: "Scope", text: "How much history, and the conversion date" },
   { title: "Map", text: "Accounts, GST codes, tracking, items and projects" },
   { title: "Validate", text: "Trial balance, P&L, balance sheet and ageing per period" },
-  { title: "Import", text: "Into Xero and Gojee, with a full audit log" },
+  { title: "Import", text: "Into Xero, with a full audit log" },
   { title: "Go live", text: "Bank feeds, checklist, then the parallel run starts" },
 ]
 
@@ -58,8 +58,6 @@ function Onboarding({ onSkip }: { onSkip: () => void }) {
               <QuickBooksLogo height={30} />
               <ArrowRight className="h-5 w-5 text-primary" />
               <XeroWordmark height={24} />
-              <span className="text-muted-foreground">+</span>
-              <GojeeLogo height={26} />
             </div>
             <ol className="divide-y divide-border">
               {STEPS.map((s, i) => {
@@ -155,7 +153,6 @@ function Dashboard() {
               ))}
             </div>
             <XeroMark size={36} />
-            <GojeeMark size={32} />
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
@@ -322,7 +319,6 @@ function Dashboard() {
             <ul className="divide-y divide-border">
               <ConnectionRow system="qbo" name={`QuickBooks Online · ${QBO_COMPANY.edition.replace("QuickBooks Online ", "")}`} detail={`Realm ${QBO_COMPANY.realmId} · read-only for the parallel run`} status="Synced" />
               <ConnectionRow system="xero" name={`Xero · ${XERO_ORG.plan}`} detail={`${XERO_ORG.name} · ${XERO_ORG.shortCode}`} status="Live" />
-              <ConnectionRow system="gojee" name="Gojee" detail={`${GOJEE_ACCOUNT.name} · signed in with Xero`} status="Synced" />
               {feedStatuses().map((f) => (
                 <li key={f.code} className="flex items-center gap-3 px-5 py-3">
                   <span className="grid h-7 w-7 place-items-center rounded-full bg-muted text-muted-foreground">
@@ -347,10 +343,10 @@ function Dashboard() {
   )
 }
 
-function ConnectionRow({ system, name, detail, status }: { system: "qbo" | "xero" | "gojee"; name: string; detail: string; status: string }) {
+function ConnectionRow({ system, name, detail, status }: { system: "qbo" | "xero"; name: string; detail: string; status: string }) {
   return (
     <li className="flex items-center gap-3 px-5 py-3">
-      {system === "qbo" ? <QuickBooksMark size={28} /> : system === "xero" ? <XeroMark size={28} /> : <GojeeMark size={28} />}
+      {system === "qbo" ? <QuickBooksMark size={28} /> : <XeroMark size={28} />}
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium">{name}</div>
         <div className="truncate text-xs text-muted-foreground">{detail}</div>

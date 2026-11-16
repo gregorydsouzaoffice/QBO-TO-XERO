@@ -26,11 +26,11 @@ import { balancesAt, natural, plBetween } from "./ledger"
 // Wizard steps
 
 export const WIZARD_STEPS = [
-  { n: 1, slug: "connect", title: "Connect", text: "QuickBooks Online, Xero and Gojee" },
+  { n: 1, slug: "connect", title: "Connect", text: "QuickBooks Online and Xero" },
   { n: 2, slug: "scope", title: "Scope", text: "History and conversion date" },
-  { n: 3, slug: "map", title: "Map", text: "Accounts, GST, tracking, items, jobs" },
+  { n: 3, slug: "map", title: "Map", text: "Accounts, GST, tracking, items" },
   { n: 4, slug: "validate", title: "Validate", text: "Trial balance, P&L, balance sheet" },
-  { n: 5, slug: "import", title: "Import", text: "Into Xero, then Gojee" },
+  { n: 5, slug: "import", title: "Import", text: "Into Xero, with full audit trail" },
   { n: 6, slug: "go-live", title: "Go live", text: "Checklist and reports" },
 ] as const
 
@@ -122,7 +122,7 @@ function activityShare(from: string, to: string): number {
 // ---------------------------------------------------------------------------
 // Pre-migration scan of QuickBooks Online
 
-export type Destination = "xero" | "gojee"
+export type Destination = "xero"
 
 export interface QboEntity {
   key: string
@@ -145,11 +145,11 @@ export interface QboEntity {
 
 export const QBO_ENTITIES: QboEntity[] = [
   { key: "accounts", name: "Accounts", qboEntity: "Account", kind: "list", total: CHART.length, destination: "xero", becomes: "Chart of accounts", note: "Sub-accounts flattened, header accounts not needed" },
-  { key: "customers", name: "Customers", qboEntity: "Customer", kind: "list", total: 412, destination: "xero", becomes: "Contacts (customers)", note: "9 duplicates merged; shared with Gojee through Xero" },
+  { key: "customers", name: "Customers", qboEntity: "Customer", kind: "list", total: 412, destination: "xero", becomes: "Contacts (customers)", note: "9 duplicates merged" },
   { key: "vendors", name: "Vendors", qboEntity: "Vendor", kind: "list", total: 167, destination: "xero", becomes: "Contacts (suppliers)", note: "4 duplicates merged" },
   { key: "employees", name: "Employees", qboEntity: "Employee", kind: "list", total: 23, destination: "xero", becomes: "Employees (details only)", note: "Pay history archived, not migrated" },
   { key: "items-service", name: "Items: service and non-inventory", qboEntity: "Item", kind: "list", total: 138, destination: "xero", becomes: "Items (untracked)" },
-  { key: "items-inventory", name: "Items: inventory", qboEntity: "Item", kind: "list", total: 214, destination: "gojee", becomes: "Stock items with quantities", note: "Inventory value stays in Xero account 630" },
+  { key: "items-inventory", name: "Items: inventory", qboEntity: "Item", kind: "list", total: 214, destination: "xero", becomes: "Tracked inventory items", note: "Inventory value in Xero account 630" },
   { key: "invoices", name: "Invoices", qboEntity: "Invoice", kind: "txn", total: 8642, open: 84, destination: "xero", becomes: "Sales invoices" },
   { key: "credit-memos", name: "Credit memos", qboEntity: "CreditMemo", kind: "txn", total: 212, open: 6, destination: "xero", becomes: "Credit notes" },
   { key: "sales-receipts", name: "Sales receipts", qboEntity: "SalesReceipt", kind: "txn", total: 1318, open: 0, destination: "xero", becomes: "Receive money transactions" },
@@ -162,10 +162,10 @@ export const QBO_ENTITIES: QboEntity[] = [
   { key: "deposits", name: "Deposits", qboEntity: "Deposit", kind: "txn", total: 1140, open: 0, destination: "xero", becomes: "Receive money transactions" },
   { key: "transfers", name: "Transfers", qboEntity: "Transfer", kind: "txn", total: 486, open: 0, destination: "xero", becomes: "Bank transfers" },
   { key: "journals", name: "Journal entries", qboEntity: "JournalEntry", kind: "txn", total: 1236, open: 1, destination: "xero", becomes: "Manual journals", note: "Balances only: one conversion balance journal" },
-  { key: "estimates", name: "Estimates", qboEntity: "Estimate", kind: "txn", total: 2940, open: 37, openOnly: true, destination: "gojee", becomes: "Quotes (open only)", note: "Closed estimates archived as PDF" },
-  { key: "purchase-orders", name: "Purchase orders", qboEntity: "PurchaseOrder", kind: "txn", total: 1710, open: 22, openOnly: true, destination: "gojee", becomes: "Purchase orders (open only)", note: "Closed POs archived as PDF" },
-  { key: "projects", name: "Projects", qboEntity: "Project", kind: "list", total: 146, open: 18, destination: "gojee", becomes: "Jobs", note: "18 open, 128 completed" },
-  { key: "time", name: "Time activities", qboEntity: "TimeActivity", kind: "txn", total: 18600, open: 1240, destination: "gojee", becomes: "Timesheets" },
+  { key: "estimates", name: "Estimates", qboEntity: "Estimate", kind: "txn", total: 2940, open: 37, openOnly: true, destination: "xero", becomes: "Quotes (open only)", note: "Closed estimates archived as PDF" },
+  { key: "purchase-orders", name: "Purchase orders", qboEntity: "PurchaseOrder", kind: "txn", total: 1710, open: 22, openOnly: true, destination: "xero", becomes: "Purchase orders (open only)", note: "Closed POs archived as PDF" },
+  { key: "projects", name: "Projects", qboEntity: "Project", kind: "list", total: 146, open: 18, destination: "xero", becomes: "Projects & Tracking", note: "18 open, 128 completed" },
+  { key: "time", name: "Time activities", qboEntity: "TimeActivity", kind: "txn", total: 18600, open: 1240, destination: "xero", becomes: "Timesheets" },
   { key: "attachments", name: "Attachments", qboEntity: "Attachable", kind: "txn", total: 21480, open: 310, destination: "xero", becomes: "Files on the matching transaction", note: "38 files over 10 MB compressed" },
   { key: "classes", name: "Classes", qboEntity: "Class", kind: "list", total: 9, destination: "xero", becomes: "Tracking category 1: Division" },
   { key: "locations", name: "Locations", qboEntity: "Department", kind: "list", total: 3, destination: "xero", becomes: "Tracking category 2: Location" },
@@ -182,21 +182,19 @@ export function entityCount(e: QboEntity, scope: HistoryScope): number {
 
 export interface ScanRow extends QboEntity {
   migrating: number
-  /** Gojee switched off: these records are archived instead */
   archived: boolean
 }
 
-export function scanRows(scope: HistoryScope, gojeeEnabled: boolean): ScanRow[] {
-  return QBO_ENTITIES.map((e) => ({ ...e, migrating: gojeeEnabled || e.destination !== "gojee" ? entityCount(e, scope) : 0, archived: !gojeeEnabled && e.destination === "gojee" }))
+export function scanRows(scope: HistoryScope): ScanRow[] {
+  return QBO_ENTITIES.map((e) => ({ ...e, migrating: entityCount(e, scope), archived: false }))
 }
 
-export function scanTotals(scope: HistoryScope, gojeeEnabled: boolean) {
-  const rows = scanRows(scope, gojeeEnabled)
-  const xero = rows.filter((r) => r.destination === "xero").reduce((t, r) => t + r.migrating, 0)
-  const gojee = rows.filter((r) => r.destination === "gojee").reduce((t, r) => t + r.migrating, 0)
+export function scanTotals(scope: HistoryScope) {
+  const rows = scanRows(scope)
+  const xero = rows.reduce((t, r) => t + r.migrating, 0)
   const inQbo = rows.reduce((t, r) => t + r.total, 0)
   const summaryJournals = scopeWindow(scope).summaryMonths
-  return { xero: xero + summaryJournals, gojee, inQbo, summaryJournals, total: xero + gojee + summaryJournals }
+  return { xero: xero + summaryJournals, inQbo, summaryJournals, total: xero + summaryJournals }
 }
 
 // ---------------------------------------------------------------------------
@@ -228,7 +226,7 @@ export function preConversionChecks(): PreCheck[] {
     { key: "ar", title: "Accounts receivable reviewed", detail: `${OPEN_COUNTS.invoices} open invoices and ${OPEN_COUNTS.creditMemos} open credit memos totalling ${money(ar)}. They come across as open items in Xero.`, status: "pass" },
     { key: "ap", title: "Accounts payable reviewed", detail: `${OPEN_COUNTS.bills} open bills and ${OPEN_COUNTS.vendorCredits} vendor credits totalling ${money(ap)}.`, status: "pass" },
     { key: "gst", title: "GST balance agrees to the last BAS", detail: `BAS lodged for the quarter ending ${fmt(lastQEnd)}. GST payable of ${money(gst)} moves to the Xero GST account.`, status: "pass" },
-    { key: "inventory", title: "Inventory quantities", detail: `3 items show negative quantity on hand. Count them and post a stock adjustment, or we set them to zero in Gojee. Inventory value ${money(inventoryValue())}.`, status: "warning" },
+    { key: "inventory", title: "Inventory quantities", detail: `3 items show negative quantity on hand. Count them and post a stock adjustment, or we adjust them in Xero. Inventory value ${money(inventoryValue())}.`, status: "warning" },
     { key: "uncategorised", title: "Uncategorised Expense", detail: `${money(uncategorised)} posted to Uncategorised Expense in ${fyLabel(fy)}. It maps to Xero 429 General Expenses unless reclassified first.`, status: uncategorised > 0 ? "warning" : "pass" },
   ]
 }
@@ -438,7 +436,7 @@ export function inventoryItems(): { rows: (InventoryItem & { value: number })[];
 }
 
 // ---------------------------------------------------------------------------
-// Projects → Gojee jobs, estimates → quotes, purchase orders
+// Projects, estimates → quotes, purchase orders
 
 export interface ProjectMap {
   qboName: string
@@ -446,7 +444,7 @@ export interface ProjectMap {
   status: "Open" | "Completed"
   /** Days before the conversion date the project started */
   startDaysAgo: number
-  gojeeJob: string
+  xeroJob: string
   /** Share of WIP at the conversion date (open projects only) */
   wipShare: number
   income: number
@@ -454,14 +452,14 @@ export interface ProjectMap {
 }
 
 export const PROJECTS: ProjectMap[] = [
-  { qboName: "Alexandria warehouse fit-out – Stage 2", customer: "Ironbark Developments Pty Ltd", status: "Open", startDaysAgo: 150, gojeeJob: "J-2418", wipShare: 0.24, income: 186400, costs: 142950 },
-  { qboName: "Bondi strata switchboard upgrades", customer: "Strata Plan 61234 – Bondi", status: "Open", startDaysAgo: 95, gojeeJob: "J-2431", wipShare: 0.09, income: 48200, costs: 31480 },
-  { qboName: "Redfern Medical Centre – new consulting suites", customer: "Redfern Medical Centre", status: "Open", startDaysAgo: 70, gojeeJob: "J-2437", wipShare: 0.14, income: 72650, costs: 58210 },
-  { qboName: "Pinnacle – Level 4 office fit-out", customer: "Pinnacle Fitouts Pty Ltd", status: "Open", startDaysAgo: 60, gojeeJob: "J-2440", wipShare: 0.12, income: 64300, costs: 49870 },
-  { qboName: "Northside Childcare – Lane Cove centre", customer: "Northside Childcare Group", status: "Open", startDaysAgo: 40, gojeeJob: "J-2446", wipShare: 0.07, income: 21900, costs: 17640 },
-  { qboName: "Marrickville Brewing – brewhouse power", customer: "Marrickville Brewing Co", status: "Open", startDaysAgo: 28, gojeeJob: "J-2449", wipShare: 0.05, income: 15800, costs: 12260 },
-  { qboName: "Coastline – Gosford townhouses (12 units)", customer: "Coastline Builders Pty Ltd", status: "Completed", startDaysAgo: 260, gojeeJob: "J-2311", wipShare: 0, income: 214800, costs: 158330 },
-  { qboName: "Ironbark – St Peters industrial park", customer: "Ironbark Developments Pty Ltd", status: "Completed", startDaysAgo: 330, gojeeJob: "J-2276", wipShare: 0, income: 302150, costs: 236900 },
+  { qboName: "Alexandria warehouse fit-out – Stage 2", customer: "Ironbark Developments Pty Ltd", status: "Open", startDaysAgo: 150, xeroJob: "PRJ-2418", wipShare: 0.24, income: 186400, costs: 142950 },
+  { qboName: "Bondi strata switchboard upgrades", customer: "Strata Plan 61234 – Bondi", status: "Open", startDaysAgo: 95, xeroJob: "PRJ-2431", wipShare: 0.09, income: 48200, costs: 31480 },
+  { qboName: "Redfern Medical Centre – new consulting suites", customer: "Redfern Medical Centre", status: "Open", startDaysAgo: 70, xeroJob: "PRJ-2437", wipShare: 0.14, income: 72650, costs: 58210 },
+  { qboName: "Pinnacle – Level 4 office fit-out", customer: "Pinnacle Fitouts Pty Ltd", status: "Open", startDaysAgo: 60, xeroJob: "PRJ-2440", wipShare: 0.12, income: 64300, costs: 49870 },
+  { qboName: "Northside Childcare – Lane Cove centre", customer: "Northside Childcare Group", status: "Open", startDaysAgo: 40, xeroJob: "PRJ-2446", wipShare: 0.07, income: 21900, costs: 17640 },
+  { qboName: "Marrickville Brewing – brewhouse power", customer: "Marrickville Brewing Co", status: "Open", startDaysAgo: 28, xeroJob: "PRJ-2449", wipShare: 0.05, income: 15800, costs: 12260 },
+  { qboName: "Coastline – Gosford townhouses (12 units)", customer: "Coastline Builders Pty Ltd", status: "Completed", startDaysAgo: 260, xeroJob: "PRJ-2311", wipShare: 0, income: 214800, costs: 158330 },
+  { qboName: "Ironbark – St Peters industrial park", customer: "Ironbark Developments Pty Ltd", status: "Completed", startDaysAgo: 330, xeroJob: "PRJ-2276", wipShare: 0, income: 302150, costs: 236900 },
 ]
 export const PROJECT_COUNTS = { total: 146, open: 18, completed: 128 }
 
@@ -476,16 +474,16 @@ export interface QuoteMap {
   title: string
   amount: number
   expires: number
-  gojeeRef: string
+  xeroRef: string
 }
 
 export const OPEN_ESTIMATES: QuoteMap[] = [
-  { qboRef: "EST-3311", customer: "Ironbark Developments Pty Ltd", title: "Stage 3 lighting and power", amount: 128400, expires: 21, gojeeRef: "Q-3311" },
-  { qboRef: "EST-3318", customer: "Strata Plan 48810 – Manly", title: "EV charger backbone, 18 bays", amount: 46250, expires: 14, gojeeRef: "Q-3318" },
-  { qboRef: "EST-3322", customer: "Redfern Medical Centre", title: "Emergency lighting replacement", amount: 9860, expires: 30, gojeeRef: "Q-3322" },
-  { qboRef: "EST-3325", customer: "Harbourside Dental", title: "Fit-out electrical and data", amount: 38700, expires: 28, gojeeRef: "Q-3325" },
-  { qboRef: "EST-3327", customer: "M. & K. Papadopoulos", title: "Solar 10 kW + battery", amount: 21480, expires: 10, gojeeRef: "Q-3327" },
-  { qboRef: "EST-3330", customer: "Northside Childcare Group", title: "Chatswood centre switchboard", amount: 7340, expires: 25, gojeeRef: "Q-3330" },
+  { qboRef: "EST-3311", customer: "Ironbark Developments Pty Ltd", title: "Stage 3 lighting and power", amount: 128400, expires: 21, xeroRef: "QU-3311" },
+  { qboRef: "EST-3318", customer: "Strata Plan 48810 – Manly", title: "EV charger backbone, 18 bays", amount: 46250, expires: 14, xeroRef: "QU-3318" },
+  { qboRef: "EST-3322", customer: "Redfern Medical Centre", title: "Emergency lighting replacement", amount: 9860, expires: 30, xeroRef: "QU-3322" },
+  { qboRef: "EST-3325", customer: "Harbourside Dental", title: "Fit-out electrical and data", amount: 38700, expires: 28, xeroRef: "QU-3325" },
+  { qboRef: "EST-3327", customer: "M. & K. Papadopoulos", title: "Solar 10 kW + battery", amount: 21480, expires: 10, xeroRef: "QU-3327" },
+  { qboRef: "EST-3330", customer: "Northside Childcare Group", title: "Chatswood centre switchboard", amount: 7340, expires: 25, xeroRef: "QU-3330" },
 ]
 
 export interface PoMap {
@@ -494,15 +492,15 @@ export interface PoMap {
   job: string
   amount: number
   received: string
-  gojeeRef: string
+  xeroRef: string
 }
 
 export const OPEN_POS: PoMap[] = [
-  { qboRef: "PO-1702", supplier: "Southern Cross Electrical Wholesale", job: "J-2418", amount: 18640, received: "Partly received", gojeeRef: "PO-1702" },
-  { qboRef: "PO-1705", supplier: "Lumen Lighting Distributors", job: "J-2437", amount: 9420, received: "Not received", gojeeRef: "PO-1705" },
-  { qboRef: "PO-1707", supplier: "Metro Cable Supplies Pty Ltd", job: "J-2440", amount: 6215, received: "Not received", gojeeRef: "PO-1707" },
-  { qboRef: "PO-1708", supplier: "Harbour Data Systems", job: "J-2440", amount: 4380, received: "Partly received", gojeeRef: "PO-1708" },
-  { qboRef: "PO-1710", supplier: "Southern Cross Electrical Wholesale", job: "J-2446", amount: 3960, received: "Not received", gojeeRef: "PO-1710" },
+  { qboRef: "PO-1702", supplier: "Southern Cross Electrical Wholesale", job: "PRJ-2418", amount: 18640, received: "Partly received", xeroRef: "PO-1702" },
+  { qboRef: "PO-1705", supplier: "Lumen Lighting Distributors", job: "PRJ-2437", amount: 9420, received: "Not received", xeroRef: "PO-1705" },
+  { qboRef: "PO-1707", supplier: "Metro Cable Supplies Pty Ltd", job: "PRJ-2440", amount: 6215, received: "Not received", xeroRef: "PO-1707" },
+  { qboRef: "PO-1708", supplier: "Harbour Data Systems", job: "PRJ-2440", amount: 4380, received: "Partly received", xeroRef: "PO-1708" },
+  { qboRef: "PO-1710", supplier: "Southern Cross Electrical Wholesale", job: "PRJ-2446", amount: 3960, received: "Not received", xeroRef: "PO-1710" },
 ]
 
 // ---------------------------------------------------------------------------
@@ -516,8 +514,8 @@ export const NOT_MIGRATED: { what: string; why: string; instead: string }[] = [
   { what: "Audit log", why: "Belongs to the QuickBooks file", instead: "PDF and CSV archive. QuickBooks stays available read-only during the parallel run." },
   { what: "Reconciliation reports", why: "Xero starts reconciled at the conversion date", instead: "PDF archive of every reconciliation report by account and month." },
   { what: "Custom fields", why: "Xero has no matching field", instead: "Values copied into the transaction reference or notes, plus a CSV archive." },
-  { what: "Closed estimates and purchase orders", why: "Only open ones are useful in Gojee", instead: "PDF archive, searchable by number and customer." },
-  { what: "Users and permissions", why: "Sign-ins are per system", instead: "Invite users in Xero and Gojee (go-live checklist)." },
+  { what: "Closed estimates and purchase orders", why: "Only open ones are active in Xero", instead: "PDF archive, searchable by number and customer." },
+  { what: "Users and permissions", why: "Sign-ins are per system", instead: "Invite users in Xero (go-live checklist)." },
 ]
 
 // ---------------------------------------------------------------------------

@@ -45,8 +45,7 @@ function Consent() {
         return
       }
       update((s) => ({ ...s, xero: { connected: true, tenantId: selected } }))
-      // Gojee is built on Xero: the Xero connection signs the user in to Gojee automatically
-      router.push(state.gojee.connected || !state.migration.gojeeEnabled ? ret : `/login/gojee?auto=1&return=${encodeURIComponent(ret)}`)
+      router.push(ret)
     }, 800)
   }
 

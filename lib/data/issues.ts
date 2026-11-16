@@ -19,7 +19,7 @@ export interface EvidenceRow {
   field: string
   qbo?: string
   xero?: string
-  /** Bank statement or Gojee value, when the issue involves a third source */
+  /** Bank statement or reference value, when the issue involves a third source */
   source?: string
   /** True when this row is where the sources disagree */
   differs?: boolean
@@ -43,7 +43,7 @@ export interface Issue {
   accounts: string[]
   qboRef: string | null
   xeroRef: string | null
-  /** Third source: "Bank statement · Westpac" or "Gojee · Job J-1042" */
+  /** Third source: "Bank statement · Westpac" or project reference */
   sourceLabel?: string
   sourceRef?: string
   evidence: EvidenceRow[]
@@ -239,7 +239,7 @@ export function issues(): Issue[] {
     },
     {
       id: "EX-1048",
-      title: "Gojee job WIP not relieved after progress claim",
+      title: "Work in progress not relieved after progress invoice",
       kind: "dependency",
       area: "Jobs & WIP",
       severity: "medium",
@@ -249,17 +249,17 @@ export function issues(): Issue[] {
       amount: 12650,
       accounts: ["1300", "4010"],
       qboRef: "Project: Macquarie Park fit-out",
-      xeroRef: "Invoice INV-4836 (synced from Gojee)",
-      sourceLabel: "Gojee · Job J-1042",
-      sourceRef: "Progress claim #3",
+      xeroRef: "Invoice INV-4836",
+      sourceLabel: "QuickBooks Project",
+      sourceRef: "Progress invoice #3",
       evidence: [
-        { field: "Progress claim #3", qbo: "$12,650.00 invoiced", xero: "$12,650.00 invoiced", source: "Claim raised, $12,650.00" },
-        { field: "WIP balance after claim", qbo: "1300 Work in Progress: no change (no WIP journal in QBO)", xero: "635 Work in Progress: no change", source: "Job ledger: WIP should fall by $12,650.00", differs: true },
-        { field: "Dependency", source: "Gojee → Xero invoice sync OK, WIP journal not sent", differs: true },
+        { field: "Progress invoice #3", qbo: "$12,650.00 invoiced", xero: "$12,650.00 invoiced", source: "Invoice raised, $12,650.00" },
+        { field: "WIP balance after claim", qbo: "1300 Work in Progress: no change (no WIP journal in QBO)", xero: "635 Work in Progress: no change", source: "Project ledger: WIP should fall by $12,650.00", differs: true },
+        { field: "Dependency", source: "Invoice created, WIP release journal not posted in Xero", differs: true },
       ],
       finding:
-        "Gojee raised the progress claim and the invoice synced to Xero correctly, but Gojee's WIP release journal did not post. Xero's Work in Progress balance depends on that journal, so it is $12,650 higher than the job ledger in Gojee.",
-      recommendation: "In Gojee, re-send the WIP journal for J-1042 claim #3 (Job → Accounting → Resend), or post a manual journal in Xero.",
+        "Progress invoice INV-4836 was issued and synced to Xero correctly, but the corresponding WIP release journal was not posted. Work in Progress in Xero is $12,650 higher than expected.",
+      recommendation: "Post a manual journal in Xero to relieve Work in Progress (635) against Cost of Sales (4010).",
       confidence: 0.88,
       needsReview: true,
       effects: [],

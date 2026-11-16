@@ -61,7 +61,6 @@ module.exports = {
         },
         xero: "hsl(var(--xero))",
         qbo: "hsl(var(--qbo))",
-        gojee: "hsl(var(--gojee))",
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
         info: "hsl(var(--info))",

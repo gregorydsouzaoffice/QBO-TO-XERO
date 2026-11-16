@@ -61,13 +61,6 @@ export const XERO_ORG = {
   ],
 }
 
-/** Gojee account (jobs, quotes, purchase orders, inventory). Signs in with Xero. */
-export const GOJEE_ACCOUNT = {
-  id: "gj-20418",
-  name: "Bluegum Electrical",
-  linkedTenantId: XERO_ORG.tenantId,
-}
-
 export const BANK_ACCOUNTS = [
   { code: "1010", name: "Westpac Business One", kind: "bank" as const, number: "032-118 44 1907", xeroCode: "090", feed: "Westpac direct feed" },
   { code: "1020", name: "Westpac Business Saver", kind: "bank" as const, number: "032-118 44 2215", xeroCode: "091", feed: "Westpac direct feed" },

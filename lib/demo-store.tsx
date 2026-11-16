@@ -16,14 +16,11 @@ export interface DemoState {
   signedIn: boolean
   qbo: { connected: boolean; realmId: string }
   xero: { connected: boolean; tenantId: string }
-  gojee: { connected: boolean }
   migration: {
     status: MigrationStatus
     /** Furthest wizard step reached, 1–6 */
     step: number
     history: HistoryScope
-    /** Gojee on/off (Projects, Estimates, POs, inventory) */
-    gojeeEnabled: boolean
     completedAt: string | null
   }
   /** Global reporting view shown in the top date selector */
@@ -33,15 +30,14 @@ export interface DemoState {
   issueStatus: Record<string, IssueStatus>
 }
 
-const KEY = "ledgershift:demo:v1"
+const KEY = "qboxero:demo:v1"
 
 export function initialDemoState(): DemoState {
   return {
     signedIn: false,
     qbo: { connected: false, realmId: QBO_COMPANY.realmId },
     xero: { connected: false, tenantId: XERO_ORG.tenantId },
-    gojee: { connected: false },
-    migration: { status: "not-started", step: 1, history: "all", gojeeEnabled: true, completedAt: null },
+    migration: { status: "not-started", step: 1, history: "all", completedAt: null },
     view: "ytd",
     custom: null,
     issueStatus: {},
@@ -55,7 +51,6 @@ export function completedDemoState(base: DemoState = initialDemoState()): DemoSt
     signedIn: true,
     qbo: { ...base.qbo, connected: true },
     xero: { ...base.xero, connected: true },
-    gojee: { connected: true },
     migration: { ...base.migration, status: "completed", step: 6, completedAt: base.migration.completedAt ?? new Date().toISOString() },
   }
 }
@@ -102,7 +97,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   const reset = useCallback(() => {
     try {
       // The QA module keeps resolution timestamps under its own key
-      sessionStorage.removeItem("ledgershift:qa:v1")
+      sessionStorage.removeItem("qboxero:qa:v1")
     } catch {
       // ignore
     }

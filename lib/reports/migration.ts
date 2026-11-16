@@ -429,10 +429,10 @@ function ageingReport(kind: "ar" | "ap", scope: HistoryScope): Report {
 export const agedReceivablesReport = (scope: HistoryScope) => ageingReport("ar", scope)
 export const agedPayablesReport = (scope: HistoryScope) => ageingReport("ap", scope)
 
-export function manifestReport(scope: HistoryScope, gojeeEnabled: boolean): Report {
+export function manifestReport(scope: HistoryScope): Report {
   const w = scopeWindow(scope)
-  const rows = scanRows(scope, gojeeEnabled)
-  const totals = scanTotals(scope, gojeeEnabled)
+  const rows = scanRows(scope)
+  const totals = scanTotals(scope)
   const entities: Table = {
     title: "Records migrated",
     columns: [
@@ -445,7 +445,7 @@ export function manifestReport(scope: HistoryScope, gojeeEnabled: boolean): Repo
       { key: "note", label: "Notes" },
     ],
     rows: [
-      ...rows.map((r) => ({ name: r.name, qboEntity: r.qboEntity, total: r.total, migrating: r.migrating, destination: r.archived ? "Archive" : r.destination === "xero" ? "Xero" : "Gojee", becomes: r.archived ? "PDF/CSV archive (Gojee off)" : r.becomes, note: r.note ?? "" })),
+      ...rows.map((r) => ({ name: r.name, qboEntity: r.qboEntity, total: r.total, migrating: r.migrating, destination: "Xero", becomes: r.becomes, note: r.note ?? "" })),
       ...(w.summaryMonths ? [{ name: "Monthly comparative balances", qboEntity: "Report (TrialBalance)", total: w.summaryMonths, migrating: w.summaryMonths, destination: "Xero", becomes: "Monthly summary journals", note: `${formatShort(w.summaryFrom!)} – ${formatShort(w.summaryTo!)}` }] : []),
     ],
     footer: { name: "Total", total: totals.inQbo, migrating: totals.total },
@@ -464,10 +464,9 @@ export function manifestReport(scope: HistoryScope, gojeeEnabled: boolean): Repo
     title: "Migration manifest",
     subtitle: w.describe,
     status: "info",
-    headline: `${totals.total.toLocaleString("en-AU")} records moved: ${totals.xero.toLocaleString("en-AU")} to Xero${gojeeEnabled ? ` and ${totals.gojee.toLocaleString("en-AU")} to Gojee` : ""}. Conversion date ${formatShort(conversionDate())}; history migrated through ${formatShort(migratedThrough())}.`,
+    headline: `${totals.total.toLocaleString("en-AU")} records moved to Xero. Conversion date ${formatShort(conversionDate())}; history migrated through ${formatShort(migratedThrough())}.`,
     summary: [
       { label: "Records to Xero", value: totals.xero.toLocaleString("en-AU") },
-      { label: "Records to Gojee", value: gojeeEnabled ? totals.gojee.toLocaleString("en-AU") : "Gojee off" },
       { label: "Conversion date", value: formatShort(conversionDate()) },
       { label: "History", value: w.describe },
     ],
@@ -475,6 +474,6 @@ export function manifestReport(scope: HistoryScope, gojeeEnabled: boolean): Repo
   }
 }
 
-export function allMigrationReports(scope: HistoryScope, gojeeEnabled: boolean): Report[] {
-  return [tbComparisonReport(scope), plByFyReport(scope), balanceSheetReport(scope), agedReceivablesReport(scope), agedPayablesReport(scope), manifestReport(scope, gojeeEnabled)]
+export function allMigrationReports(scope: HistoryScope): Report[] {
+  return [tbComparisonReport(scope), plByFyReport(scope), balanceSheetReport(scope), agedReceivablesReport(scope), agedPayablesReport(scope), manifestReport(scope)]
 }

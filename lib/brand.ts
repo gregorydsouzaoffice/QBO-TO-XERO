@@ -1,23 +1,18 @@
 /**
- * Branding for the QuickBooks Online → Xero + Gojee platform.
+ * Branding for the QuickBooks Online → Xero platform.
  *
  * Every screen, email preview and generated PDF/Excel file reads from here.
- * Values marked PLACEHOLDER are still open. Change them in this one file.
  *
  * Logos: only official files supplied by the client are used (public/images/*).
  * The product itself has no logo yet, so its name is rendered as plain text.
  */
 export const brand = {
-  /** PLACEHOLDER: product name not decided yet */
-  productName: "LedgerShift",
-  /** PLACEHOLDER: one-line positioning */
-  tagline: "Accounting intelligence for QuickBooks Online to Xero",
-  /** PLACEHOLDER: product logo. Null = render the product name as plain text. */
+  productName: "QBO to Xero",
+  tagline: "QuickBooks Online to Xero migration and financial QA",
   productLogoSrc: null as string | null,
-  /** PLACEHOLDER */
-  domain: "app.ledgershift.example",
-  supportEmail: "support@ledgershift.example",
-  qaSenderName: "LedgerShift AI QA",
+  domain: "app.qbotoxero.example",
+  supportEmail: "support@qbotoxero.example",
+  qaSenderName: "AI Financial QA",
 
   logos: {
     quickbooks: "/images/qbo/quickbooks-logo.png",
@@ -27,9 +22,6 @@ export const brand = {
     xeroRound: "/images/Xero-logo.png",
     xeroWordmark: "/images/xero/xero-wordmark-cyan.png",
     xeroWordmarkWhite: "/images/xero/xero-wordmark-white.png",
-    gojee: "/images/gojee/gojee-logo.png",
-    gojeeWhite: "/images/gojee/gojee-logo-white.png",
-    gojeeTile: "/images/gojee/gojee-tile.png",
   },
 
   poweredBy: {
@@ -71,4 +63,4 @@ export const CHART_COLOURS = {
 } as const
 
 /** @deprecated use CHART_COLOURS */
-export const SYSTEM_COLOURS = { qbo: CHART_COLOURS.qbo, xero: CHART_COLOURS.xero, gojee: "#003c64", bank: "#59687a" } as const
+export const SYSTEM_COLOURS = { qbo: CHART_COLOURS.qbo, xero: CHART_COLOURS.xero, bank: "#59687a" } as const

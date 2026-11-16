@@ -5,13 +5,13 @@ import { completedDemoState, useDemo } from "@/lib/demo-store"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowRight, BarChart3, Eye, EyeOff, Loader2, Lock, ShieldCheck, Sparkles, Workflow } from "lucide-react"
-import { GojeeLogo, PoweredBy, ProductWordmark, QuickBooksLogo, XeroMark, XeroWordmark } from "@/components/brand"
+import { PoweredBy, ProductWordmark, QuickBooksLogo, XeroMark, XeroWordmark } from "@/components/brand"
 import { Checkbox } from "@/components/ui/checkbox"
 import { brand } from "@/lib/brand"
 import { USER } from "@/lib/data/company"
 
 const VALUE = [
-  { icon: Workflow, title: "Migrate", text: "QuickBooks Online history into Xero, with jobs, quotes, POs and stock into Gojee." },
+  { icon: Workflow, title: "Migrate", text: "QuickBooks Online history into Xero, with chart of accounts, invoices, bills and historical data." },
   { icon: BarChart3, title: "Track & report", text: "One tracker for bank, figures and reconciliations. YTD, previous year and since inception." },
   { icon: Sparkles, title: "AI Financial QA", text: "Every figure checked against its source every 2 hours, with an evidence-backed report." },
 ]
@@ -50,8 +50,6 @@ export default function LoginPage() {
             <QuickBooksLogo onDark height={26} />
             <ArrowRight className="h-5 w-5 shrink-0 text-xero" />
             <XeroWordmark onDark height={22} />
-            <span className="text-white/50">+</span>
-            <GojeeLogo onDark height={24} />
           </div>
 
           <ul className="mt-10 space-y-6">

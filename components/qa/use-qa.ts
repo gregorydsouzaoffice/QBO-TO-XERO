@@ -12,7 +12,7 @@ import { runAt, type Fixes, type RunResult } from "@/lib/qa/engine"
  * each exception was marked resolved (so the next run can confirm the fix).
  * Kept in sessionStorage under its own key, alongside the shared demo store.
  */
-const KEY = "ledgershift:qa:v1"
+const KEY = "qboxero:qa:v1"
 
 interface Local {
   manualRuns: string[]

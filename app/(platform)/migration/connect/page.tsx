@@ -3,45 +3,41 @@
 import { useRouter } from "next/navigation"
 import type { ReactNode } from "react"
 import { CheckCircle2, CircleDashed, Link2Off, LogIn, ShieldCheck } from "lucide-react"
-import { GojeeLogo, QuickBooksLogo, QuickBooksMark, XeroMark, XeroWordmark } from "@/components/brand"
+import { QuickBooksLogo, QuickBooksMark, XeroMark, XeroWordmark } from "@/components/brand"
 import StepShell from "@/components/migration/step-shell"
 import { Button } from "@/components/ui/button"
-import { Switch } from "@/components/ui/switch"
-import { GOJEE_ACCOUNT, QBO_COMPANY, XERO_ORG } from "@/lib/data/company"
+import { QBO_COMPANY, XERO_ORG } from "@/lib/data/company"
 import { useDemo } from "@/lib/demo-store"
 
 const RETURN = "/migration/connect"
 const qboHref = `/connect/quickbooks?return=${encodeURIComponent(RETURN)}`
 const xeroHref = `/login/xero?return=${encodeURIComponent(RETURN)}`
-const gojeeHref = `/login/gojee?auto=1&return=${encodeURIComponent(RETURN)}`
 
 export default function ConnectPage() {
   const router = useRouter()
   const { state, update } = useDemo()
-  const { qbo, xero, gojee, migration } = state
+  const { qbo, xero } = state
 
   const qboCompany = [{ realmId: QBO_COMPANY.realmId, name: QBO_COMPANY.name, edition: QBO_COMPANY.edition }, ...QBO_COMPANY.otherCompanies].find((c) => c.realmId === qbo.realmId) ?? QBO_COMPANY
   const xeroOrg = [{ tenantId: XERO_ORG.tenantId, name: XERO_ORG.name }, ...XERO_ORG.otherOrgs].find((o) => o.tenantId === xero.tenantId) ?? XERO_ORG
 
-  const allConnected = qbo.connected && xero.connected && (!migration.gojeeEnabled || gojee.connected)
+  const allConnected = qbo.connected && xero.connected
   const nextTarget = !qbo.connected
     ? { to: "Connect QuickBooks", href: qboHref }
     : !xero.connected
       ? { to: "Connect Xero", href: xeroHref }
-      : migration.gojeeEnabled && !gojee.connected
-        ? { to: "Connect Gojee", href: gojeeHref }
-        : { to: "Scope", href: "/migration/scope" }
+      : { to: "Scope", href: "/migration/scope" }
 
   return (
     <StepShell
       step={1}
       requireConnections={false}
       title="Connect your systems"
-      description="Sign in to QuickBooks Online to read your books, and to the new, empty Xero organisation they move into. Gojee signs in through Xero."
+      description="Sign in to QuickBooks Online to read your books, and to the new, empty Xero organisation they move into."
       next={{ to: nextTarget.to, onClick: () => router.push(nextTarget.href) }}
       footerNote={allConnected ? "All connected" : undefined}
     >
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* QuickBooks Online */}
         <SystemCard
           role="Source"
@@ -59,7 +55,6 @@ export default function ConnectPage() {
             qbo.connected ? (
               <DisconnectButton onClick={() => update((s) => ({ ...s, qbo: { ...s.qbo, connected: false } }))} label="Disconnect" />
             ) : (
-              // TODO(official-asset): replace with Intuit's official "Connect to QuickBooks" button image (public/images/qbo/connect-to-quickbooks.png + hover state) once supplied.
               <Button onClick={() => router.push(qboHref)} className="w-full gap-2 sm:w-auto">
                 <QuickBooksMark size={20} />
                 Connect to QuickBooks
@@ -97,43 +92,6 @@ export default function ConnectPage() {
             )
           }
         />
-
-        {/* Gojee */}
-        <SystemCard
-          role="Jobs, quotes, POs and inventory"
-          logo={<GojeeLogo height={28} />}
-          title="Gojee"
-          text="Projects become jobs, open estimates become quotes, open purchase orders and inventory quantities move here. Signs in with your Xero login."
-          connected={migration.gojeeEnabled && gojee.connected}
-          off={!migration.gojeeEnabled}
-          toggle={
-            <label className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/40 px-3 py-2.5 text-sm">
-              <span>
-                <span className="font-medium">Use Gojee</span>
-                <span className="block text-xs text-muted-foreground">{migration.gojeeEnabled ? "Projects, estimates, POs and inventory go to Gojee" : "Those records are archived as PDF and CSV instead"}</span>
-              </span>
-              <Switch checked={migration.gojeeEnabled} onCheckedChange={(v) => update((s) => ({ ...s, migration: { ...s.migration, gojeeEnabled: v } }))} aria-label="Use Gojee" />
-            </label>
-          }
-          details={[
-            ["Account", GOJEE_ACCOUNT.name],
-            ["Account ID", GOJEE_ACCOUNT.id],
-            ["Sign-in", "With Xero (single sign-on)"],
-            ["Linked organisation", XERO_ORG.shortCode],
-          ]}
-          action={
-            !migration.gojeeEnabled ? null : gojee.connected ? (
-              <DisconnectButton onClick={() => update((s) => ({ ...s, gojee: { connected: false } }))} label="Disconnect" />
-            ) : xero.connected ? (
-              <Button onClick={() => router.push(gojeeHref)} className="w-full gap-2 sm:w-auto">
-                <LogIn className="h-4 w-4" />
-                Sign in with Xero
-              </Button>
-            ) : (
-              <p className="text-xs text-muted-foreground">Connect Xero first. Gojee then signs in automatically.</p>
-            )
-          }
-        />
       </div>
 
       <section className="panel flex flex-col gap-3 p-5 sm:flex-row sm:items-start">
@@ -143,7 +101,7 @@ export default function ConnectPage() {
             <span className="font-semibold text-foreground">Read-only from QuickBooks.</span> The QuickBooks connection asks only for permission to read your accounting data. You can
             disconnect at any time here, or from the Apps area in QuickBooks.
           </p>
-          <p className="mt-1.5">Xero and Gojee connections can write data, because that is where your books are going. Disconnecting stops any further changes.</p>
+          <p className="mt-1.5">The Xero connection can write data, because that is where your books are going. Disconnecting stops any further changes.</p>
         </div>
       </section>
     </StepShell>

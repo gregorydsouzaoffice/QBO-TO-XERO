@@ -2,7 +2,7 @@
  * AI Financial QA engine over the demo data.
  *
  * Workflow per run (every 2 hours, lib/data/schedule.ts):
- *   1 collect   QuickBooks, Xero, bank statements and Gojee
+ *   1 collect   QuickBooks, Xero and bank statements
  *   2 validate  the check catalogue (lib/qa/checks.ts)
  *   3 detect    exceptions open at the run: detectedAt ≤ run < resolvedAt
  *   4 report    the QA report (lib/qa/report.ts)
@@ -116,11 +116,9 @@ function records(at: Date): RunRecords {
   const asOf = isoOf(at)
   const bank = bankTransactions().filter((r) => r.date <= asOf).length
   const months = Math.max(1, Math.round(daysBetween(INCEPTION_DATE, asOf) / 30.44))
-  const sinceConv = Math.max(1, daysBetween(conversionDate(), asOf) + 1)
   const qbo = Math.round(months * 486 + bank * 1.35)
   const xero = Math.round(months * 486 * 0.97 + bank * 1.4)
-  const gojee = Math.round(3_860 + sinceConv * 14.5)
-  return { qbo, xero, bank, gojee, total: qbo + xero + bank + gojee }
+  return { qbo, xero, bank, total: qbo + xero + bank }
 }
 
 export interface RunOptions {

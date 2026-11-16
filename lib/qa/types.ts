@@ -1,7 +1,7 @@
 /**
  * Types for the AI Financial QA engine. The engine runs every 2 hours
- * (lib/data/schedule.ts) over QuickBooks Online, Xero, the bank statements and
- * Gojee, and every result traces back to lib/data.
+ * (lib/data/schedule.ts) over QuickBooks Online, Xero and the bank statements,
+ * and every result traces back to lib/data.
  */
 import type { Amounts } from "../data/ledger"
 import type { BankTxn } from "../data/bank"
@@ -11,7 +11,7 @@ import type { Issue, Severity } from "../data/issues"
 export type QaArea = "figures" | "bank" | "qbo-xero" | "dependencies" | "entries" | "calculations"
 
 /** Systems a check reads. Matches SystemKey in components/brand.tsx. */
-export type QaSource = "qbo" | "xero" | "bank" | "gojee"
+export type QaSource = "qbo" | "xero" | "bank"
 
 export type CheckStatus = "pass" | "warn" | "fail"
 
@@ -19,7 +19,7 @@ export interface MeasureRow {
   label: string
   qbo?: number | string
   xero?: number | string
-  /** Bank statement or Gojee value */
+  /** Bank statement or reference value */
   source?: number | string
   kind?: "money" | "int" | "text"
 }
@@ -67,7 +67,7 @@ export interface CheckDef {
   /** What it compares, in plain words */
   compares: string
   sources: QaSource[]
-  /** Label for the third column when a bank statement or Gojee is involved */
+  /** Label for the third column when a bank statement is involved */
   sourceLabel?: string
   /** Exceptions this check raises or watches */
   watches: string[]
@@ -88,7 +88,6 @@ export interface RunRecords {
   qbo: number
   xero: number
   bank: number
-  gojee: number
   total: number
 }
 

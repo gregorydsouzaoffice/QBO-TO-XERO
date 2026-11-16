@@ -13,10 +13,10 @@ import type { CheckResult, Fixes, RunResult } from "@/lib/qa/types"
 import { cn } from "@/lib/utils"
 import { CheckStatusPill } from "./status"
 
-/** Field | QuickBooks | Xero | Bank/Gojee, differing rows highlighted with icon + text */
+/** Field | QuickBooks | Xero | Bank/Source, differing rows highlighted with icon + text */
 export function EvidenceTable({ issue }: { issue: Issue }) {
   const hasSource = issue.evidence.some((e) => e.source !== undefined)
-  const sourceLabel = issue.sourceLabel ?? "Bank / Gojee"
+  const sourceLabel = issue.sourceLabel ?? "Bank"
   return (
     <div className="overflow-x-auto">
       <table className="data-table min-w-[640px]">

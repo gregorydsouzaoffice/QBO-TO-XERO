@@ -15,8 +15,8 @@ import { CheckPill } from "./step-shell"
 const PREVIEW_ROWS = 10
 
 /** The six comparative reports with on-screen preview, PDF and Excel downloads */
-export default function MigrationReportList({ scope, gojeeEnabled }: { scope: HistoryScope; gojeeEnabled: boolean }) {
-  const reports = useMemo(() => allMigrationReports(scope, gojeeEnabled), [scope, gojeeEnabled])
+export default function MigrationReportList({ scope }: { scope: HistoryScope }) {
+  const reports = useMemo(() => allMigrationReports(scope), [scope])
   const [busy, setBusy] = useState<string | null>(null)
   const [open, setOpen] = useState<string | null>(null)
 

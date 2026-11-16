@@ -6,7 +6,7 @@
 import { conversionDate, formatShort, migratedThrough } from "../clock"
 import type { Issue, IssueKind } from "../data/issues"
 
-export type SourceKey = "westpac" | "amex" | "gojee" | "payroll" | "conversion" | "manual"
+export type SourceKey = "westpac" | "amex" | "payroll" | "conversion" | "manual"
 export type TargetKey = "qbo" | "xero"
 export type LinkHealth = "healthy" | "minor" | "issue"
 
@@ -15,7 +15,7 @@ export interface DependencySource {
   name: string
   detail: string
   /** Which logo to show (only official files via components/brand.tsx) */
-  system: "bank" | "gojee" | "xero" | "qbo" | "people"
+  system: "bank" | "xero" | "qbo" | "people"
 }
 
 export interface DependencyLinkDef {
@@ -39,7 +39,6 @@ export function dependencySources(): DependencySource[] {
   return [
     { key: "westpac", name: "Westpac bank feeds", detail: "Business One · Business Saver", system: "bank" },
     { key: "amex", name: "Amex card feed", detail: "Amex Business Card (Yodlee)", system: "bank" },
-    { key: "gojee", name: "Gojee", detail: "Jobs, quotes, purchase orders, inventory", system: "gojee" },
     { key: "payroll", name: "Xero Payroll", detail: "Fortnightly pay runs", system: "xero" },
     { key: "conversion", name: "Conversion balances", detail: `QuickBooks history to ${formatShort(migratedThrough())}`, system: "qbo" },
     { key: "manual", name: "Manual entry", detail: "Bills, invoices and contacts keyed by the accounts team", system: "people" },
@@ -51,10 +50,7 @@ const LINKS: DependencyLinkDef[] = [
   { id: "L-02", source: "westpac", target: "xero", flow: "Statement lines", match: { kinds: ["feed", "duplicate"], accounts: ["1010", "1020"] }, healthyNote: "Feeding daily, all lines received" },
   { id: "L-03", source: "amex", target: "qbo", flow: "Card transactions", match: { ids: [] }, healthyNote: "Feeding daily, all lines received" },
   { id: "L-04", source: "amex", target: "xero", flow: "Card transactions", match: { kinds: ["feed"], accounts: ["2110"] }, healthyNote: "Feeding daily, all lines received" },
-  { id: "L-05", source: "gojee", target: "xero", flow: "Invoices and progress claims", match: { ids: [] }, healthyNote: "Every claim raised in Gojee has synced" },
-  { id: "L-06", source: "gojee", target: "xero", flow: "WIP journals", match: { kinds: ["dependency"], areas: ["Jobs & WIP"] }, healthyNote: "WIP journals posted for every claim" },
-  { id: "L-07", source: "gojee", target: "xero", flow: "Purchase orders → bills", match: { ids: [] }, healthyNote: "Billed POs synced as draft bills" },
-  { id: "L-08", source: "gojee", target: "xero", flow: "Quotes (no ledger impact)", match: { ids: [] }, healthyNote: "Accepted quotes linked to jobs" },
+  { id: "L-06", source: "conversion", target: "xero", flow: "Project WIP balances", match: { kinds: ["dependency"], areas: ["Jobs & WIP"] }, healthyNote: "WIP balances tied to project ledgers" },
   { id: "L-09", source: "payroll", target: "xero", flow: "Pay runs → general ledger", match: { ids: [] }, healthyNote: "Pay runs posted to wages, PAYG and super" },
   { id: "L-10", source: "payroll", target: "qbo", flow: "Summary payroll journal", match: { areas: ["Payroll"] }, healthyNote: "Journal posted after each pay run" },
   { id: "L-11", source: "conversion", target: "xero", flow: "Opening balances and history", match: { ids: ["EX-1038"] }, healthyNote: `Trial balances agreed at ${formatShort(conversionDate())}` },

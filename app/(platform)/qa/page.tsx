@@ -34,7 +34,7 @@ function QaDashboard() {
       <PageHeader
         eyebrow={COMPANY.name}
         title="AI Financial QA"
-        description={`The AI QA engine checks QuickBooks Online against Xero, the bank statements and Gojee every 2 hours. Parallel run day ${parallelRunDay()}, since ${formatShort(conversionDate())}.`}
+        description={`The AI QA engine checks QuickBooks Online against Xero and the bank statements every 2 hours. Parallel run day ${parallelRunDay()}, since ${formatShort(conversionDate())}.`}
         actions={<ReportActions run={latest} statusOf={qa.statusOf} />}
       />
       <PageBody>
@@ -53,7 +53,7 @@ function QaDashboard() {
 
         <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
           <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-          Every figure above is computed from QuickBooks, Xero, the bank statements or Gojee and traces to the evidence on each exception. Fixes made in Xero are confirmed at the next run.
+          Every figure above is computed from QuickBooks, Xero or the bank statements and traces to the evidence on each exception. Fixes made in Xero are confirmed at the next run.
         </p>
       </PageBody>
     </>

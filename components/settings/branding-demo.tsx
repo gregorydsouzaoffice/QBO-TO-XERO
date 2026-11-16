@@ -77,7 +77,7 @@ export function DemoControls() {
           </div>
           <Button
             variant="outline"
-            disabled={state.migration.status === "completed" && state.qbo.connected && state.xero.connected && state.gojee.connected}
+            disabled={state.migration.status === "completed" && state.qbo.connected && state.xero.connected}
             onClick={() => {
               update((s) => completedDemoState(s))
               toast.success("Skipped to the parallel run")
@@ -124,7 +124,7 @@ export function DemoControls() {
             <AlertDialogAction
               onClick={() => {
                 try {
-                  sessionStorage.removeItem("ledgershift:qa:v1")
+                  sessionStorage.removeItem("qboxero:qa:v1")
                 } catch {
                   // ignore
                 }
