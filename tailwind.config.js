@@ -17,10 +17,6 @@ module.exports = {
       },
     },
     extend: {
-      fontFamily: {
-        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -54,22 +50,6 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
-        },
-        nav: {
-          DEFAULT: "hsl(var(--nav))",
-          foreground: "hsl(var(--nav-foreground))",
-        },
-        xero: "hsl(var(--xero))",
-        qbo: "hsl(var(--qbo))",
-        success: "hsl(var(--success))",
-        warning: "hsl(var(--warning))",
-        info: "hsl(var(--info))",
-        brand: {
-          teal: "hsl(var(--brand-teal))",
-          purple: "hsl(var(--brand-purple))",
-          violet: "hsl(var(--brand-violet))",
-          pink: "hsl(var(--brand-pink))",
-          mint: "hsl(var(--brand-mint))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -132,8 +112,7 @@ module.exports = {
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-        "gradient-mesh":
-          "linear-gradient(to right bottom, hsl(var(--brand-purple)), hsl(var(--brand-violet)), hsl(var(--brand-pink)))",
+        "gradient-mesh": "linear-gradient(to right bottom, #6366f1, #8b5cf6, #d946ef)",
       },
     },
   },

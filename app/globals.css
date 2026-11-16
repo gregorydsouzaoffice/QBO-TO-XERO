@@ -2,81 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * Theme: Xero-based product UI.
- *   Xero brand blue  #13B5EA  (accents, highlights, "Xero" data)
- *   Xero action blue #0078C8  (primary buttons and links)
- *   Navy             #062A4D  (top navigation, PDF header band)
- *   Ink              #000A1E · text #1E3145 · muted #59687A · lines #D5DAE0
- * QuickBooks appears only through its official logo files. Its green is
- * reserved for the logo; QBO data series use --qbo.
- */
 @layer base {
   :root {
-    --background: 210 20% 97%;
-    --foreground: 222 100% 6%;
+    /* Updated to Google Material Design 3 color palette with refined neutrals */
+    --background: 0 0% 100%;
+    --foreground: 210 11% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 211 40% 20%;
+    --card-foreground: 210 11% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 211 40% 20%;
+    --popover-foreground: 210 11% 15%;
 
-    --primary: 203 100% 39%;
+    --primary: 210 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 205 60% 96%;
-    --secondary-foreground: 209 86% 16%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 210 11% 15%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 213 16% 41%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 210 6% 46%;
 
-    --accent: 196 85% 94%;
-    --accent-foreground: 209 86% 16%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 210 11% 15%;
 
-    --destructive: 356 74% 46%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 213 15% 86%;
-    --input: 213 15% 80%;
-    --ring: 203 100% 39%;
+    --border: 210 20% 92%;
+    --input: 210 20% 96%;
+    --ring: 210 100% 50%;
 
-    --radius: 0.625rem;
-
-    /* Product tokens */
-    --nav: 209 86% 16%;
-    --nav-foreground: 0 0% 100%;
-    --xero: 195 85% 50%;
-    --qbo: 150 78% 28%;
-    --success: 150 78% 28%;
-    --warning: 34 100% 38%;
-    --info: 203 100% 39%;
-
-    /* Legacy aliases kept so shared components keep compiling */
-    --brand-mint: 195 85% 50%;
-    --brand-teal: 203 100% 39%;
-    --brand-purple: 209 86% 16%;
-    --brand-violet: 203 100% 39%;
-    --brand-pink: 195 85% 42%;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 211 40% 20%;
-    --sidebar-primary: 203 100% 39%;
+    --sidebar-foreground: 210 11% 15%;
+    --sidebar-primary: 210 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 205 60% 96%;
-    --sidebar-accent-foreground: 209 86% 16%;
-    --sidebar-border: 213 15% 86%;
-    --sidebar-ring: 203 100% 39%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 210 11% 15%;
+    --sidebar-border: 210 20% 92%;
+    --sidebar-ring: 210 100% 50%;
 
-    --chart-1: 195 85% 50%;
-    --chart-2: 150 78% 28%;
-    --chart-3: 209 86% 16%;
-    --chart-4: 34 100% 45%;
-    --chart-5: 356 74% 46%;
+    /* Added Google-inspired chart colors */
+    --chart-1: 210 100% 50%;
+    --chart-2: 142 76% 36%;
+    --chart-3: 25 95% 53%;
+    --chart-4: 271 81% 56%;
+    --chart-5: 0 84% 60%;
+  }
 
-    --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
-    --ease-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
-    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  .dark {
+    --background: 210 11% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 210 11% 6%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 210 11% 6%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 210 100% 60%;
+    --primary-foreground: 210 11% 4%;
+
+    --secondary: 210 11% 10%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 210 11% 10%;
+    --muted-foreground: 210 6% 63%;
+
+    --accent: 210 11% 10%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 210 11% 15%;
+    --input: 210 11% 15%;
+    --ring: 210 100% 60%;
+
+    --sidebar-background: 210 11% 4%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 210 100% 60%;
+    --sidebar-primary-foreground: 210 11% 4%;
+    --sidebar-accent: 210 11% 10%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 210 11% 15%;
+    --sidebar-ring: 210 100% 60%;
   }
 }
 
@@ -86,148 +98,88 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    /* Added Google-style smooth scrolling and improved text rendering */
+    scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  .tabular {
-    font-variant-numeric: tabular-nums;
-  }
 }
 
 @layer components {
-  /* Xero-style white panel */
-  .panel {
-    @apply rounded-[10px] border border-border bg-card;
-    box-shadow: 0 1px 2px hsl(213 30% 20% / 0.06);
-  }
-  .panel-header {
-    @apply flex items-center justify-between gap-3 border-b border-border px-5 py-3.5;
-  }
-  .panel-title {
-    @apply text-[15px] font-semibold text-foreground;
-  }
-
-  /* Kept for older markup */
+  /* Google Material Design 3 inspired components */
   .google-card {
-    @apply rounded-[10px] border border-border bg-card p-6;
-    box-shadow: 0 1px 2px hsl(213 30% 20% / 0.06);
+    @apply bg-card border border-border/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-border;
   }
 
-  /* Data tables */
-  .data-table {
-    @apply w-full text-sm;
-  }
-  .data-table thead th {
-    @apply whitespace-nowrap border-b border-border bg-muted/60 px-4 py-2.5 text-left text-xs font-semibold text-muted-foreground;
-  }
-  .data-table tbody td {
-    @apply border-b border-border/70 px-4 py-2.5 align-middle;
-  }
-  .data-table tbody tr:hover {
-    background: hsl(var(--accent) / 0.6);
-  }
-  .data-table .num {
-    @apply text-right tabular-nums;
-  }
-  .data-table tfoot td {
-    @apply border-t-2 border-border bg-muted/40 px-4 py-2.5 font-semibold;
-  }
-  /* Wrap wide tables so they scroll inside their panel, never the page */
-  .table-wrap {
-    @apply w-full overflow-x-auto;
+  .google-button-primary {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium text-sm transition-all duration-200 hover:shadow-lg hover:bg-primary/90 active:scale-95 focus:ring-2 focus:ring-ring focus:ring-offset-2;
   }
 
-  /* Status pills */
-  .pill {
-    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold;
-  }
-  .pill-success {
-    @apply pill;
-    background: hsl(var(--success) / 0.1);
-    color: hsl(var(--success));
-  }
-  .pill-warning {
-    @apply pill;
-    background: hsl(var(--warning) / 0.12);
-    color: hsl(var(--warning));
-  }
-  .pill-danger {
-    @apply pill;
-    background: hsl(var(--destructive) / 0.1);
-    color: hsl(var(--destructive));
-  }
-  .pill-info {
-    @apply pill;
-    background: hsl(var(--info) / 0.1);
-    color: hsl(var(--info));
-  }
-  .pill-muted {
-    @apply pill bg-muted text-muted-foreground;
+  .google-button-secondary {
+    @apply bg-secondary text-secondary-foreground border border-border px-6 py-3 rounded-full font-medium text-sm transition-all duration-200 hover:bg-secondary/80 hover:shadow-sm active:scale-95 focus:ring-2 focus:ring-ring focus:ring-offset-2;
   }
 
-  .premium-button {
-    @apply bg-primary text-primary-foreground shadow-sm transition-colors;
-  }
-  .premium-button:hover {
-    background: hsl(203 100% 31%);
-  }
-  .premium-button:disabled {
-    @apply opacity-50;
+  .google-input {
+    @apply bg-input border border-border rounded-xl px-4 py-3 text-sm transition-all duration-200 focus:ring-2 focus:ring-ring focus:border-transparent placeholder:text-muted-foreground;
   }
 
+  .google-surface {
+    @apply bg-card/50 backdrop-blur-sm border border-border/30 rounded-2xl;
+  }
+
+  /* Updated gradient styles with Google's blue palette */
   .gradient-text {
-    @apply text-foreground;
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-600 to-primary;
   }
-  .journey-gradient-bg {
-    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--xero)));
-  }
+
   .gradient-bg {
-    background: linear-gradient(135deg, hsl(var(--nav)), hsl(var(--primary)));
+    @apply bg-gradient-to-r from-primary via-blue-600 to-primary;
+  }
+
+  .google-gradient {
+    @apply bg-gradient-to-br from-primary/5 via-blue-50 to-primary/5;
+  }
+
+  /* Google-style typography scale */
+  .google-display-large {
+    @apply text-5xl font-normal tracking-tight leading-tight;
+  }
+
+  .google-display-medium {
+    @apply text-4xl font-normal tracking-tight leading-tight;
+  }
+
+  .google-display-small {
+    @apply text-3xl font-normal tracking-tight leading-tight;
+  }
+
+  .google-headline-large {
+    @apply text-2xl font-normal tracking-tight leading-tight;
+  }
+
+  .google-headline-medium {
+    @apply text-xl font-normal tracking-tight leading-tight;
+  }
+
+  .google-title-large {
+    @apply text-lg font-medium tracking-tight leading-tight;
+  }
+
+  .google-body-large {
+    @apply text-base font-normal leading-relaxed;
+  }
+
+  .google-body-medium {
+    @apply text-sm font-normal leading-relaxed;
+  }
+
+  .google-label-large {
+    @apply text-sm font-medium tracking-wide;
   }
 }
 
-/* ---------------------------------------------------------------------------
-   Motion system
---------------------------------------------------------------------------- */
-
-/* Soft mint halo that breathes around the primary action */
-@keyframes mint-breathe {
-  0%,
-  100% {
-    box-shadow:
-      0 4px 20px -4px hsl(var(--brand-purple) / 0.45),
-      0 0 0 0 hsl(var(--brand-mint) / 0.55);
-  }
-  50% {
-    box-shadow:
-      0 6px 24px -4px hsl(var(--brand-purple) / 0.5),
-      0 0 0 6px hsl(var(--brand-mint) / 0);
-  }
-}
-
-@keyframes check-pop {
-  0% {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  70% {
-    transform: scale(1.12);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-.check-pop {
-  animation: check-pop 0.45s var(--ease-spring) both;
-}
-
-::selection {
-  background: hsl(var(--xero) / 0.25);
-  color: hsl(var(--primary));
-}
-
+/* Google Material Design 3 motion system */
 @keyframes google-fade-in {
   from {
     opacity: 0;
@@ -271,15 +223,15 @@
 }
 
 .animate-google-fade-in {
-  animation: google-fade-in 0.4s var(--ease-decelerate) forwards;
+  animation: google-fade-in 0.4s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
 }
 
 .animate-google-scale-in {
-  animation: google-scale-in 0.3s var(--ease-decelerate) forwards;
+  animation: google-scale-in 0.3s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
 }
 
 .animate-google-slide-up {
-  animation: google-slide-up 0.4s var(--ease-decelerate) forwards;
+  animation: google-slide-up 0.4s cubic-bezier(0.05, 0.7, 0.1, 1) forwards;
 }
 
 .animate-google-shimmer {
@@ -288,6 +240,7 @@
   animation: google-shimmer 1.5s infinite;
 }
 
+/* Google-style staggered delays */
 .animate-delay-75 {
   animation-delay: 75ms;
 }
@@ -301,6 +254,7 @@
   animation-delay: 300ms;
 }
 
+/* Added CSS animations to replace framer-motion */
 @keyframes fade-in-up {
   from {
     opacity: 0;
@@ -309,6 +263,15 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes scroll-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-1500px);
   }
 }
 
@@ -340,82 +303,17 @@
   }
 }
 
-@keyframes gradient-pan {
-  0% {
-    background-position: 0% center;
-  }
-  100% {
-    background-position: -200% center;
-  }
-}
-
-@keyframes shine {
-  to {
-    transform: translateX(130%);
-  }
-}
-
-/* Ambient hero blobs — slow organic drift */
-@keyframes blob-drift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(40px, -28px) scale(1.08);
-  }
-  66% {
-    transform: translate(-28px, 20px) scale(0.95);
-  }
-}
-
-/* Data packets travelling along the migration path */
-@keyframes data-flow {
-  0% {
-    left: 0%;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
-  }
-  12% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    left: 100%;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
-  }
-}
-
-/* Seamless marquee — track holds two identical lists, shifts by exactly one */
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.55;
-    transform: scale(0.8);
-  }
-}
-
 .animate-fade-in-up {
-  animation: fade-in-up 0.6s var(--ease-decelerate) forwards;
+  animation: fade-in-up 0.6s ease-out forwards;
 }
 
 .animate-fade-in-delayed {
-  animation: fade-in-up 0.6s var(--ease-decelerate) 0.2s forwards;
+  animation: fade-in-up 0.6s ease-out 0.2s forwards;
   opacity: 0;
+}
+
+.animate-scroll-left {
+  animation: scroll-left 30s linear infinite;
 }
 
 .animate-float {
@@ -430,27 +328,6 @@
   animation: premium-shimmer 3s ease-in-out infinite;
 }
 
-.animate-blob-slow {
-  animation: blob-drift 16s ease-in-out infinite;
-}
-
-.animate-marquee {
-  animation: marquee 38s linear infinite;
-}
-
-.marquee-paused:hover .animate-marquee {
-  animation-play-state: paused;
-}
-
-.marquee-mask {
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-}
-
-.animate-pulse-dot {
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
 .animation-delay-200 {
   animation-delay: 200ms;
   opacity: 0;
@@ -461,81 +338,6 @@
   opacity: 0;
 }
 
-.animation-delay-600 {
-  animation-delay: 600ms;
-  opacity: 0;
-}
-
 .animation-delay-2000 {
   animation-delay: 2s;
-}
-
-/* ---------------------------------------------------------------------------
-   Scroll-triggered reveals (used with app/components/scroll-reveal.tsx)
---------------------------------------------------------------------------- */
-
-.reveal {
-  opacity: 0;
-  transition:
-    opacity 0.7s var(--ease-decelerate),
-    transform 0.7s var(--ease-decelerate);
-  will-change: opacity, transform;
-}
-.reveal-up {
-  transform: translateY(28px);
-}
-.reveal-left {
-  transform: translateX(-28px);
-}
-.reveal-right {
-  transform: translateX(28px);
-}
-.reveal-scale {
-  transform: scale(0.94);
-}
-.reveal-in {
-  opacity: 1;
-  transform: none;
-}
-
-/* Cascading children inside a revealed container: line draws, chips pop */
-.journey-line {
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 1.4s var(--ease-emphasized) 0.15s;
-}
-.reveal-in .journey-line {
-  transform: scaleX(1);
-}
-.step-chip {
-  opacity: 0;
-  transform: translateY(12px) scale(0.9);
-  transition:
-    opacity 0.5s var(--ease-decelerate),
-    transform 0.5s var(--ease-spring);
-}
-.reveal-in .step-chip {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* ---------------------------------------------------------------------------
-   Accessibility — collapse decorative motion for users who opt out
---------------------------------------------------------------------------- */
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-  .reveal,
-  .step-chip,
-  .journey-line {
-    opacity: 1 !important;
-    transform: none !important;
-  }
 }

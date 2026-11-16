@@ -9,8 +9,6 @@ interface AnimatedCounterProps {
   className?: string
   prefix?: string
   suffix?: string
-  /** Number of fraction digits to keep while counting (default 0) */
-  decimals?: number
   onComplete?: () => void
 }
 
@@ -21,42 +19,35 @@ export default function AnimatedCounter({
   className,
   prefix = "",
   suffix = "",
-  decimals = 0,
   onComplete,
 }: AnimatedCounterProps) {
   const [count, setCount] = useState(from)
 
   useEffect(() => {
     const startTime = Date.now()
-    let frame: number
     const animate = () => {
       const elapsed = Date.now() - startTime
       const progress = Math.min(elapsed / (duration * 1000), 1)
 
       const easeOut = 1 - Math.pow(1 - progress, 3)
-      setCount(from + (to - from) * easeOut)
+      const currentCount = Math.round(from + (to - from) * easeOut)
+
+      setCount(currentCount)
 
       if (progress < 1) {
-        frame = requestAnimationFrame(animate)
+        requestAnimationFrame(animate)
       } else {
-        setCount(to)
         onComplete?.()
       }
     }
 
-    frame = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(frame)
+    requestAnimationFrame(animate)
   }, [from, to, duration, onComplete])
 
   return (
     <span className={className}>
       {prefix}
-      <span>
-        {count.toLocaleString(undefined, {
-          minimumFractionDigits: decimals,
-          maximumFractionDigits: decimals,
-        })}
-      </span>
+      <span>{count}</span>
       {suffix}
     </span>
   )

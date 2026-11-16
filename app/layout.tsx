@@ -1,17 +1,13 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import { GeistMono } from "geist/font/mono"
-import { Analytics } from "@vercel/analytics/next"
-import { DemoProvider } from "@/lib/demo-store"
-import { brand } from "@/lib/brand"
-import "./globals.css"
-
-// Clean, neutral sans close to Xero's product UI
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-sans", display: "swap" })
+import type { Metadata } from 'next'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
+import { Analytics } from '@vercel/analytics/next'
+import './globals.css'
 
 export const metadata: Metadata = {
-  title: `${brand.productName} | QuickBooks Online to Xero Migration`,
-  description: `${brand.tagline}. Migration, financial tracker, reporting and AI financial QA.`,
+  title: 'v0 App',
+  description: 'Created with v0',
+  generator: 'v0.app',
 }
 
 export default function RootLayout({
@@ -20,17 +16,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en-AU" className={`${inter.variable} ${GeistMono.variable}`}>
+    <html lang="en">
       <head>
         <style>{`
 html {
-  font-family: ${inter.style.fontFamily}, ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ${GeistMono.style.fontFamily};
+  font-family: ${GeistSans.style.fontFamily};
+  --font-sans: ${GeistSans.variable};
+  --font-mono: ${GeistMono.variable};
 }
         `}</style>
       </head>
       <body>
-        <DemoProvider>{children}</DemoProvider>
+        {children}
         <Analytics />
       </body>
     </html>
