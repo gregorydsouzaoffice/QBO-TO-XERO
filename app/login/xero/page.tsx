@@ -1,6 +1,6 @@
 "use client"
 
-import React, { Suspense, useState, useEffect } from "react"
+import React, { Suspense, useState, useEffect, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ExternalLink, Loader2, CheckCircle2, ShieldCheck, Check, ChevronDown, ArrowRight } from "lucide-react"
 
@@ -18,7 +18,8 @@ function XeroAuthFlow() {
   const [step, setStep] = useState<AuthStep>("login")
   const [email, setEmail] = useState("luke.sorbara@mmcconvert.com.au")
   const [password, setPassword] = useState("••••••••••••")
-  const [mfaCode, setMfaCode] = useState("849201")
+  const [mfaDigits, setMfaDigits] = useState<string[]>(["", "", "", "", "", ""])
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([])
   const [trustDevice, setTrustDevice] = useState(true)
   const [selectedOrg, setSelectedOrg] = useState("demo-xero")
   const [isLoading, setIsLoading] = useState(false)
@@ -63,6 +64,78 @@ function XeroAuthFlow() {
       setIsLoading(false)
       setStep("mfa")
     }, 600)
+  }
+
+  // Focus first MFA digit input when transitioning to mfa step
+  useEffect(() => {
+    if (step === "mfa") {
+      const timer = setTimeout(() => {
+        inputRefs.current[0]?.focus()
+      }, 120)
+      return () => clearTimeout(timer)
+    }
+  }, [step])
+
+  const handleDigitChange = (index: number, val: string) => {
+    const cleaned = val.replace(/\D/g, "")
+    if (!cleaned) {
+      const copy = [...mfaDigits]
+      copy[index] = ""
+      setMfaDigits(copy)
+      return
+    }
+
+    if (cleaned.length > 1) {
+      const chars = cleaned.slice(0, 6).split("")
+      const copy = [...mfaDigits]
+      chars.forEach((c, i) => {
+        if (index + i < 6) copy[index + i] = c
+      })
+      setMfaDigits(copy)
+      const nextIdx = Math.min(index + chars.length, 5)
+      inputRefs.current[nextIdx]?.focus()
+      return
+    }
+
+    const copy = [...mfaDigits]
+    copy[index] = cleaned[0]
+    setMfaDigits(copy)
+
+    if (index < 5 && cleaned.length > 0) {
+      inputRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleDigitKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace") {
+      if (!mfaDigits[index] && index > 0) {
+        const copy = [...mfaDigits]
+        copy[index - 1] = ""
+        setMfaDigits(copy)
+        inputRefs.current[index - 1]?.focus()
+      } else {
+        const copy = [...mfaDigits]
+        copy[index] = ""
+        setMfaDigits(copy)
+      }
+    } else if (e.key === "ArrowLeft" && index > 0) {
+      inputRefs.current[index - 1]?.focus()
+    } else if (e.key === "ArrowRight" && index < 5) {
+      inputRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleDigitPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6)
+    if (!pasted) return
+    const copy = [...mfaDigits]
+    pasted.split("").forEach((c, i) => {
+      if (i < 6) copy[i] = c
+    })
+    setMfaDigits(copy)
+    const nextIdx = Math.min(pasted.length, 5)
+    inputRefs.current[nextIdx]?.focus()
   }
 
   // Handle MFA submission
@@ -226,24 +299,66 @@ function XeroAuthFlow() {
                   <strong className="text-[#1e3145]">{email}</strong>
                 </p>
 
-                <form onSubmit={handleMfaSubmit} className="space-y-5">
+                <form onSubmit={handleMfaSubmit} className="space-y-6">
                   <div>
-                    <label
-                      htmlFor="code"
-                      className="mb-2 block text-[15px] font-normal text-[#1e3145]"
-                    >
-                      Verification code
-                    </label>
-                    <input
-                      id="code"
-                      type="text"
-                      maxLength={6}
-                      required
-                      value={mfaCode}
-                      onChange={(e) => setMfaCode(e.target.value)}
-                      placeholder="123456"
-                      className="h-12 w-full rounded-[3px] border border-[#8c96a0] bg-white px-3 text-center text-2xl font-mono tracking-[0.4em] text-[#1e3145] transition-all outline-none focus:border-[#0078c8] focus:shadow-[0_0_0_2px_rgba(0,120,200,0.25)]"
-                    />
+                    <div className="mb-2 flex items-center justify-between">
+                      <label className="block text-[15px] font-medium text-[#1e3145]">
+                        Verification code
+                      </label>
+                      <span className="text-xs text-[#59687a]">6 digits</span>
+                    </div>
+
+                    {/* Segmented 6-digit OTP code entry (starts completely blank) */}
+                    <div className="flex items-center gap-1.5 sm:gap-2.5">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        {[0, 1, 2].map((idx) => (
+                          <input
+                            key={idx}
+                            ref={(el) => {
+                              inputRefs.current[idx] = el
+                            }}
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
+                            pattern="[0-9]*"
+                            maxLength={1}
+                            value={mfaDigits[idx]}
+                            onChange={(e) => handleDigitChange(idx, e.target.value)}
+                            onKeyDown={(e) => handleDigitKeyDown(idx, e)}
+                            onPaste={handleDigitPaste}
+                            aria-label={`Digit ${idx + 1}`}
+                            className="h-12 w-11 sm:h-14 sm:w-12 rounded-[4px] border border-[#8c96a0] bg-white text-center font-mono text-2xl font-bold text-[#1e3145] transition-all outline-none focus:border-[#0078c8] focus:shadow-[0_0_0_2px_rgba(0,120,200,0.25)]"
+                          />
+                        ))}
+                      </div>
+
+                      <span className="text-xl font-bold text-[#8c96a0] select-none px-1">–</span>
+
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        {[3, 4, 5].map((idx) => (
+                          <input
+                            key={idx}
+                            ref={(el) => {
+                              inputRefs.current[idx] = el
+                            }}
+                            type="text"
+                            inputMode="numeric"
+                            autoComplete="one-time-code"
+                            pattern="[0-9]*"
+                            maxLength={1}
+                            value={mfaDigits[idx]}
+                            onChange={(e) => handleDigitChange(idx, e.target.value)}
+                            onKeyDown={(e) => handleDigitKeyDown(idx, e)}
+                            onPaste={handleDigitPaste}
+                            aria-label={`Digit ${idx + 1}`}
+                            className="h-12 w-11 sm:h-14 sm:w-12 rounded-[4px] border border-[#8c96a0] bg-white text-center font-mono text-2xl font-bold text-[#1e3145] transition-all outline-none focus:border-[#0078c8] focus:shadow-[0_0_0_2px_rgba(0,120,200,0.25)]"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="mt-2 text-xs text-[#59687a]">
+                      Open your authenticator app (e.g. Xero Verify, Google Authenticator) and enter code.
+                    </p>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -262,7 +377,10 @@ function XeroAuthFlow() {
                   <div className="flex items-center justify-between pt-2">
                     <button
                       type="button"
-                      onClick={() => setStep("login")}
+                      onClick={() => {
+                        setMfaDigits(["", "", "", "", "", ""])
+                        setStep("login")
+                      }}
                       className="text-sm text-[#0078c8] hover:underline"
                     >
                       Use a different account
@@ -270,8 +388,8 @@ function XeroAuthFlow() {
 
                     <button
                       type="submit"
-                      disabled={isLoading}
-                      className="inline-flex h-10 min-w-[100px] items-center justify-center rounded-[3px] bg-[#0078c8] px-6 text-[15px] font-medium text-white shadow-none transition-colors hover:bg-[#00609f] focus:outline-none focus:ring-2 focus:ring-[#0078c8] focus:ring-offset-1 disabled:opacity-75"
+                      disabled={isLoading || mfaDigits.join("").length === 0}
+                      className="inline-flex h-10 min-w-[100px] items-center justify-center rounded-[3px] bg-[#0078c8] px-6 text-[15px] font-medium text-white shadow-none transition-colors hover:bg-[#00609f] focus:outline-none focus:ring-2 focus:ring-[#0078c8] focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin text-white" />
