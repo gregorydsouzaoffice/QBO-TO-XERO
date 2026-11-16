@@ -16,7 +16,7 @@ function XeroAuthFlow() {
   const qboConnected = searchParams.get("qbo_connected") === "true"
 
   const [step, setStep] = useState<AuthStep>("login")
-  const [email, setEmail] = useState("ankit@mmcconvert.com")
+  const [email, setEmail] = useState("luke.sorbara@mmcconvert.com.au")
   const [password, setPassword] = useState("••••••••••••")
   const [mfaCode, setMfaCode] = useState("849201")
   const [trustDevice, setTrustDevice] = useState(true)

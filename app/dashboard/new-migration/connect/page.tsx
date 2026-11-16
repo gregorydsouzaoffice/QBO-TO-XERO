@@ -7,7 +7,17 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { ArrowLeft, ArrowRight, CheckCircle, Database, FileText, Map, CheckSquare, Upload, CalendarDays } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { getMigrationDate, setMigrationDate, formatLong } from "@/lib/migration-date"
+import {
+  getMigrationStartDate,
+  setMigrationStartDate,
+  getMigrationEndDate,
+  setMigrationEndDate,
+  formatDateDot,
+  formatPeriod,
+  formatPeriodLong,
+  DEFAULT_START_DATE,
+  DEFAULT_END_DATE,
+} from "@/lib/migration-date"
 
 export default function ConnectAccounts() {
   const router = useRouter()
@@ -18,19 +28,25 @@ export default function ConnectAccounts() {
   const [progress, setProgress] = useState(20)
   const [mounted, setMounted] = useState(false)
 
-  const [migrationDate, setMigrationDateState] = useState("")
+  const [startDate, setStartDate] = useState(DEFAULT_START_DATE)
+  const [endDate, setEndDate] = useState(DEFAULT_END_DATE)
   const qboConnected = searchParams.get("qbo_connected") === "true"
   const xeroConnected = searchParams.get("xero_connected") === "true"
 
   useEffect(() => {
     setMounted(true)
-    // Always dynamic: defaults to the current day unless the user picked a date this session
-    setMigrationDateState(getMigrationDate())
+    setStartDate(getMigrationStartDate())
+    setEndDate(getMigrationEndDate())
   }, [])
 
-  const handleDateChange = (value: string) => {
-    setMigrationDateState(value)
-    if (value) setMigrationDate(value)
+  const handleStartDateChange = (value: string) => {
+    setStartDate(value)
+    if (value) setMigrationStartDate(value)
+  }
+
+  const handleEndDateChange = (value: string) => {
+    setEndDate(value)
+    if (value) setMigrationEndDate(value)
   }
 
   // Carry the current connection state through each auth hop
@@ -275,7 +291,7 @@ export default function ConnectAccounts() {
                     </div>
                     <div className="rounded-xl border border-border/45 bg-muted/20 backdrop-blur-sm p-3.5">
                       <div className="text-xs text-muted-foreground">Connected as:</div>
-                      <div className="font-semibold text-sm text-foreground mt-0.5">{qboConnected ? "ankit@mmcconvert.com" : "Not connected"}</div>
+                      <div className="font-semibold text-sm text-foreground mt-0.5">{qboConnected ? "luke.sorbara@mmcconvert.com.au" : "Not connected"}</div>
                     </div>
                   </CardContent>
                   <CardFooter className="pt-2">
@@ -321,7 +337,7 @@ export default function ConnectAccounts() {
                     </div>
                     <div className="rounded-xl border border-border/45 bg-muted/20 backdrop-blur-sm p-3.5">
                       <div className="text-xs text-muted-foreground">Connected as:</div>
-                      <div className="font-semibold text-sm text-foreground mt-0.5">{xeroConnected ? "ankit@mmcconvert.com" : "Not connected"}</div>
+                      <div className="font-semibold text-sm text-foreground mt-0.5">{xeroConnected ? "luke.sorbara@mmcconvert.com.au" : "Not connected"}</div>
                     </div>
                   </CardContent>
                   <CardFooter className="pt-2">
@@ -336,25 +352,44 @@ export default function ConnectAccounts() {
                 </Card>
               </div>
 
-              <div className="rounded-2xl border border-border/40 bg-card/50 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="rounded-2xl border border-border/40 bg-card/50 p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-sm">
                     <CalendarDays className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <div className="font-semibold text-foreground">Migration Date</div>
-                    <div className="text-xs text-muted-foreground">
-                      Conversion date for the {destinationDetails.name} file
-                      {migrationDate ? ` — ${formatLong(migrationDate)}` : ""}
+                    <div className="font-semibold text-foreground flex flex-wrap items-center gap-2">
+                      <span>Conversion Period</span>
+                      <span className="rounded-full bg-primary/10 border border-primary/25 px-2.5 py-0.5 text-xs font-mono font-medium text-primary">
+                        {formatDateDot(startDate)} to {formatDateDot(endDate)}
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      Conversion period for the {destinationDetails.name} file — {formatPeriodLong(startDate, endDate)}
                     </div>
                   </div>
                 </div>
-                <Input
-                  type="date"
-                  value={migrationDate}
-                  onChange={(e) => handleDateChange(e.target.value)}
-                  className="md:w-56 h-11 rounded-xl"
-                />
+
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">From:</span>
+                    <Input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => handleStartDateChange(e.target.value)}
+                      className="w-full sm:w-40 h-11 rounded-xl font-mono text-sm"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">To:</span>
+                    <Input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => handleEndDateChange(e.target.value)}
+                      className="w-full sm:w-40 h-11 rounded-xl font-mono text-sm"
+                    />
+                  </div>
+                </div>
               </div>
             </CardContent>
             <CardFooter className="flex justify-end border-t border-border/30 pt-6 mt-4">

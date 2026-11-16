@@ -46,7 +46,7 @@ export default function AccountPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
-                <Input id="email" type="email" defaultValue="ankit@mmcconvert.com" />
+                <Input id="email" type="email" defaultValue="luke.sorbara@mmcconvert.com.au" />
               </div>
 
               <div className="space-y-2">

@@ -1,7 +1,17 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { getMigrationDate, todayISO, formatLong, formatShort } from "@/lib/migration-date"
+import {
+  getMigrationStartDate,
+  getMigrationEndDate,
+  formatDateDot,
+  formatPeriod,
+  formatPeriodLong,
+  formatLong,
+  formatShort,
+  DEFAULT_START_DATE,
+  DEFAULT_END_DATE,
+} from "@/lib/migration-date"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -122,9 +132,11 @@ const tabData = {
 }
 
 export default function MigrationReport() {
-  const [migrationDate, setMigrationDate] = useState(todayISO())
+  const [startDate, setStartDate] = useState(DEFAULT_START_DATE)
+  const [endDate, setEndDate] = useState(DEFAULT_END_DATE)
   useEffect(() => {
-    setMigrationDate(getMigrationDate())
+    setStartDate(getMigrationStartDate())
+    setEndDate(getMigrationEndDate())
   }, [])
   const [activeTab, setActiveTab] = useState("summary")
   const [isDownloading, setIsDownloading] = useState<Record<string, boolean>>({
@@ -200,8 +212,8 @@ export default function MigrationReport() {
         throw new Error(`Unknown report type: ${reportType}`)
       }
 
-      // Open the report in a new tab
-      window.open(`/reports/${fileName}.html?date=${migrationDate}`, "_blank")
+      // Open the report in a new tab with conversion period params
+      window.open(`/reports/${fileName}.html?date=${endDate}&startDate=${startDate}`, "_blank")
     } catch (error) {
       console.error(`Error opening report:`, error)
       alert(`Error opening report. Please try again.`)
@@ -225,8 +237,9 @@ export default function MigrationReport() {
             <div className="space-y-1">
               <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">Migration Report</h1>
               <p className="text-muted-foreground">
-                QuickBooks Online to Xero migration completed on{" "}
-                {formatLong(migrationDate)}
+                QuickBooks Online to Xero migration · Conversion Period:{" "}
+                <span className="font-semibold text-foreground">{formatDateDot(startDate)} to {formatDateDot(endDate)}</span>
+                {" "}({formatPeriodLong(startDate, endDate)})
               </p>
               <div className="flex items-center mt-2.5 rounded-full bg-green-500/10 border border-green-500/20 px-3 py-1 text-xs font-semibold text-green-500 w-fit">
                 <CheckCircle className="mr-1.5 h-3.5 w-3.5" /> Successfully completed
@@ -386,15 +399,21 @@ export default function MigrationReport() {
                     <div className="space-y-3">
                       <div className="grid grid-cols-2 gap-4 border-b border-border/30 pb-2.5 text-sm">
                         <div className="font-medium text-muted-foreground">Migration ID</div>
-                        <div className="text-foreground font-mono">MIG-{migrationDate.replace(/-/g, "")}-001</div>
+                        <div className="text-foreground font-mono">MIG-{endDate.replace(/-/g, "")}-001</div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 border-b border-border/30 pb-2.5 text-sm">
+                        <div className="font-medium text-muted-foreground">Conversion Period</div>
+                        <div className="text-foreground font-mono font-medium text-primary">
+                          {formatDateDot(startDate)} to {formatDateDot(endDate)}
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4 border-b border-border/30 pb-2.5 text-sm">
                         <div className="font-medium text-muted-foreground">Start Time</div>
-                        <div className="text-foreground">{formatShort(migrationDate)} - 10:15:22</div>
+                        <div className="text-foreground">{formatShort(endDate)} - 10:15:22</div>
                       </div>
                       <div className="grid grid-cols-2 gap-4 border-b border-border/30 pb-2.5 text-sm">
                         <div className="font-medium text-muted-foreground">End Time</div>
-                        <div className="text-foreground">{formatShort(migrationDate)} - 10:18:47</div>
+                        <div className="text-foreground">{formatShort(endDate)} - 10:18:47</div>
                       </div>
                       <div className="grid grid-cols-2 gap-4 border-b border-border/30 pb-2.5 text-sm">
                         <div className="font-medium text-muted-foreground">Duration</div>
