@@ -52,7 +52,7 @@ export default function TopNav() {
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
-        <Link href="/home" className="mr-1 flex items-center">
+        <Link href="/home" className="mr-2 flex items-center">
           <ProductWordmark onDark />
         </Link>
 

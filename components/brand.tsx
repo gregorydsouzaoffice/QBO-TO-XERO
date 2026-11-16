@@ -32,11 +32,32 @@ export function XeroWordmark({ onDark = false, height = 20, className }: { onDar
   return <img src={onDark ? brand.logos.xeroWordmarkWhite : brand.logos.xeroWordmark} alt="Xero" style={{ height }} className={cn("w-auto", className)} />
 }
 
-/** Product name as plain text until an official product logo is supplied */
-export function ProductWordmark({ onDark = false, className }: { onDark?: boolean; className?: string }) {
-  if (brand.productLogoSrc) return <img src={brand.productLogoSrc} alt={brand.productName} className={cn("h-7 w-auto", className)} />
+/** MMC Convert official logo mark */
+export function MMCConvertLogo({ size = 32, className }: { size?: number; className?: string }) {
   return (
-    <span className={cn("text-[17px] font-bold tracking-tight", onDark ? "text-white" : "text-foreground", className)}>{brand.productName}</span>
+    <img
+      src={brand.poweredBy.logoSrc}
+      alt={brand.poweredBy.name}
+      style={{ width: size, height: size }}
+      className={cn("shrink-0 rounded-md bg-white object-contain p-0.5 shadow-sm", className)}
+    />
+  )
+}
+
+/** Major header branding lockup: MMC Convert logo + primary name + product label */
+export function ProductWordmark({ onDark = false, className }: { onDark?: boolean; className?: string }) {
+  return (
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <MMCConvertLogo size={32} />
+      <span className="flex items-center gap-2">
+        <span className={cn("text-[17px] font-bold tracking-tight whitespace-nowrap", onDark ? "text-white" : "text-foreground")}>
+          MMC Convert
+        </span>
+        <span className={cn("hidden sm:inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-semibold tracking-wide uppercase whitespace-nowrap", onDark ? "bg-white/15 text-white/90" : "bg-muted text-muted-foreground")}>
+          QBO to Xero
+        </span>
+      </span>
+    </span>
   )
 }
 

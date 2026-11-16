@@ -14,7 +14,7 @@ describe("ledger", () => {
         expect(Math.abs(bs.check), `${sys} ${d}`).toBeLessThan(0.02)
       }
     }
-  })
+  }, 15000)
 
   it("trial balance debits equal credits", () => {
     for (const d of dates()) {

@@ -9,7 +9,7 @@
 export const brand = {
   productName: "QBO to Xero",
   tagline: "QuickBooks Online to Xero migration and financial QA",
-  productLogoSrc: null as string | null,
+  productLogoSrc: "/images/mmc-convert-logo.png" as string | null,
   domain: "app.qbotoxero.example",
   supportEmail: "support@qbotoxero.example",
   qaSenderName: "AI Financial QA",
